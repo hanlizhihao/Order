@@ -9,6 +9,8 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -16,6 +18,8 @@ import com.hlz.fragment.ContactsFragment;
 import com.hlz.fragment.DiscoverFragment;
 import com.hlz.fragment.MeFragment;
 import com.hlz.fragment.chatsFragment;
+import com.hlz.util.AppManager;
+import com.hlz.util.DoubleClickExitHelper;
 import com.hlz.util.MonitoringTime;
 
 import java.util.ArrayList;
@@ -32,6 +36,8 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     //类型为Fragment的动态数组
     private ArrayList<Fragment> fragmentList ;
     private MonitoringTime monitoringTime;//监视使用时间
+    private DoubleClickExitHelper mDoubleClickExit;
+    private AppManager appManager;
     @Override
     public void onResume(){
         super.onResume();
@@ -54,6 +60,9 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         InitViewPager();
         //初始化监视APP使用时间的类
         monitoringTime=new MonitoringTime(MainActivity.this);
+        mDoubleClickExit = new DoubleClickExitHelper(this);//双击退出
+        appManager=AppManager.getAppManager();
+        appManager.addActivity(this);
     }
     public void InitView()
     {
@@ -177,27 +186,10 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-                builder.setTitle("提示");
-                builder.setMessage("你确定要退出吗？");
-                builder.setIcon(R.drawable.z);
-                DialogInterface.OnClickListener dialog = new DialogInterface.OnClickListener() {
-
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        if (arg1 == DialogInterface.BUTTON_POSITIVE) {
-                            arg0.cancel();
-                        } else if (arg1 == DialogInterface.BUTTON_NEGATIVE) {
-                            MainActivity.this.finish();
-                        }
-                    }
-                };
-                builder.setPositiveButton("取消", dialog);
-                builder.setNegativeButton("确定", dialog);
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
+            // 是否退出应用
+            return mDoubleClickExit.onKeyDown(keyCode, event);
         }
-        return false;
+        return super.onKeyDown(keyCode, event);
     }
 
 }
