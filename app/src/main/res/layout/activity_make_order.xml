@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical"
+	android:gravity="top|center"
+	android:layout_width="match_parent"
+	android:layout_height="match_parent"
+	android:id="@+id/cart">
+	<!-- 显示菜单的线性布局 -->
+	<LinearLayout
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:orientation="vertical"
+		android:layout_gravity="top"
+		android:layout_above="@+id/cart_view"
+		android:weightSum="1">
+		<Button
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:text="@string/bug"
+			android:id="@+id/btn"/>
+		<com.hlz.util.ClearEditText
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content"
+			android:id="@+id/filter_edit"
+			android:layout_marginTop="5dip"
+			android:background="@drawable/search_bar_edit_selector"
+			android:drawableLeft="@drawable/search_bar_icon_normal"
+			android:hint="@string/keyword"
+			android:singleLine="true"
+			android:textSize="15.0dip"/>
+		<FrameLayout
+			android:layout_width="match_parent"
+			android:layout_height="wrap_content">
+			<ListView
+				android:id="@+id/country_lvcountry"
+				android:layout_width="match_parent"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center|top"
+				android:divider="@null" />
+			<TextView
+				android:id="@+id/dialog"
+				android:layout_width="80.0dip"
+				android:layout_height="80.0dip"
+				android:layout_gravity="center"
+				android:background="@drawable/show_head_toast_bg"
+				android:gravity="center"
+				android:textColor="#ffffffff"
+				android:textSize="30.0dip"
+				android:visibility="invisible" />
+			<com.hlz.util.SideBar
+				android:id="@+id/sidrbar"
+				android:layout_width="30.0dip"
+				android:layout_gravity="end|top"
+				android:layout_height="wrap_content" />
+		</FrameLayout>
+		<android.support.v4.widget.Space
+			android:layout_width="match_parent"
+			android:layout_height="1dp" />
+	</LinearLayout>
+	<LinearLayout
+		android:id="@+id/cart_view"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:background="#ff2f373e"
+		android:layout_alignParentBottom="true" >
+		<ImageView
+			android:id="@+id/order_cart"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:layout_marginLeft="12.0dip"
+			android:background="@mipmap/cart" />
+
+		<LinearLayout
+			android:layout_width="0.0dip"
+			android:layout_height="wrap_content"
+			android:layout_weight="1.0"
+			android:gravity="center_vertical"
+			android:orientation="vertical" >
+
+			<TextView
+				android:id="@+id/sumSize"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:includeFontPadding="false"
+				android:textColor="@color/red"
+				android:textSize="15.0sp" />
+
+			<TextView
+				android:id="@+id/sumPrice"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:includeFontPadding="false"
+				android:textColor="@color/red"
+				android:textSize="12.0sp"
+				android:visibility="visible" />
+		</LinearLayout>
+
+		<FrameLayout
+			android:id="@+id/goto_cart"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:paddingBottom="10.0dip"
+			android:paddingLeft="12.0dip"
+			android:paddingRight="12.0dip"
+			android:paddingTop="10.0dip" >
+
+			<TextView
+				android:id="@+id/take_order_button"
+				android:layout_width="wrap_content"
+				android:layout_height="wrap_content"
+				android:layout_gravity="center"
+				android:background="@drawable/selector_grey_dark_corners_button"
+				android:gravity="center"
+				android:minHeight="0.0dip"
+				android:minWidth="100.0dip"
+				android:text="@string/goto_cart"
+				android:paddingBottom="5.0dip"
+				android:paddingLeft="15.0dip"
+				android:paddingRight="15.0dip"
+				android:paddingTop="5.0dip"
+				android:singleLine="true"
+				android:textColor="@color/white"
+				android:textSize="17.0sp" />
+		</FrameLayout>
+	</LinearLayout>
+</RelativeLayout>
