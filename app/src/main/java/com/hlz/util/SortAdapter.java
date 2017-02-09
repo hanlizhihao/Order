@@ -71,7 +71,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
         final SortModel mContent = list.get(position);
         if (view == null) {
             viewHolder = new ViewHolder();
-            view = LayoutInflater.from(mContext).inflate(R.layout.item, null);
+            view = LayoutInflater.from(mContext).inflate(R.layout.item_makeorder, null);
             viewHolder.tvTitle = (TextView) view.findViewById(R.id.title);//具体是那个菜
             viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
             viewHolder.tvButton=(ImageButton)view.findViewById(R.id.make_order);

@@ -1,16 +1,13 @@
 package com.hlz.order;
 
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
@@ -38,6 +35,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private MonitoringTime monitoringTime;//监视使用时间
     private DoubleClickExitHelper mDoubleClickExit;
     private AppManager appManager;
+    private Toolbar toolbar;
     @Override
     public void onResume(){
         super.onResume();
@@ -54,6 +52,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         //界面初始函数，用来获取定义的各控件对应的ID
         InitView();
         //ViewPager初始化函数

@@ -2,6 +2,8 @@ package com.hlz.activity;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
@@ -25,7 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public class MakeOrder extends Activity {
+public class MakeOrder extends AppCompatActivity {
     /**
      * 必要变量
      */
@@ -52,6 +54,11 @@ public class MakeOrder extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_order);
         realative=(RelativeLayout)findViewById(R.id.cart);
+        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
+        toolbar.setLogo(R.mipmap.ic_launcher);
+        toolbar.setTitle("点菜宝");
+        toolbar.setSubtitle("创建餐桌");
+        setSupportActionBar(toolbar);
         initViews();
     }
     private void initViews() {

@@ -3,9 +3,11 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/best_head_bg</item>
+        <item name="colorPrimaryDark">@color/best_head_bg</item>
+        <item name="colorAccent">@color/best_head_bg</item>
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
     <style name="AppBaseTheme" parent="android:Theme.Holo">
         <item name="android:windowBackground">@android:color/background_light</item>
@@ -27,5 +29,6 @@
         <item name="android:paddingTop">2dp</item>
         <item name="android:singleLine">true</item>
     </style>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 </resources>

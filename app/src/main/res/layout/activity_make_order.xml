@@ -5,19 +5,16 @@
 	android:layout_width="match_parent"
 	android:layout_height="match_parent"
 	android:id="@+id/cart">
+	<include layout="@layout/app_tool_bar"/>
 	<!-- 显示菜单的线性布局 -->
 	<LinearLayout
 		android:layout_width="match_parent"
+		android:layout_below="@+id/app_bar_layout"
 		android:layout_height="wrap_content"
 		android:orientation="vertical"
 		android:layout_gravity="top"
 		android:layout_above="@+id/cart_view"
 		android:weightSum="1">
-		<Button
-			android:layout_width="match_parent"
-			android:layout_height="wrap_content"
-			android:text="@string/bug"
-			android:id="@+id/btn"/>
 		<com.hlz.util.ClearEditText
 			android:layout_width="match_parent"
 			android:layout_height="wrap_content"
@@ -118,7 +115,7 @@
 				android:paddingLeft="15.0dip"
 				android:paddingRight="15.0dip"
 				android:paddingTop="5.0dip"
-				android:singleLine="true"
+				android:maxLines="1"
 				android:textColor="@color/white"
 				android:textSize="17.0sp" />
 		</FrameLayout>

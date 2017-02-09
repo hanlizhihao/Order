@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <include layout="@layout/app_tool_bar"/>
     <android.support.v4.view.ViewPager
         android:id="@+id/main_ViewPager"
         android:layout_width="match_parent"
