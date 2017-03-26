@@ -2,12 +2,17 @@ package com.hlz.order;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.AppCompatCheckBox;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+
+import com.hlz.activity.MainActivity;
+import com.hlz.database.DataBaseUtil;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -35,8 +40,22 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login);
         ButterKnife.inject(this);
+        if (isFristRun()){//这是一个历史遗留问题，主要是判断是不是第一次运行的函数不可用导致
+            Log.d("LoginActivity","是第一次运行");
+            DataBaseUtil dataBaseUtil=new DataBaseUtil();
+            Boolean sign=dataBaseUtil.createDatabase(MyApplication.getContext());
+            dataBaseUtil.DataBaseUtilInit(MyApplication.getContext());
+            String[] menu=getResources().getStringArray(R.array.datetest);
+            Boolean sign1=dataBaseUtil.initExample(menu);
+            if (sign&&sign1){
+                Log.d("TAG","数据库创建成功，数据初始化成功");
+            }else{
+                Log.d("TAG","失败");
+            }
+        }else{
+            Log.d("LoginActivity","不是第一次运行");
+        }
     }
-
     @OnClick({R.id.remember, R.id.login_btn, R.id.setting_url, R.id.forget})
     public void onClick(View view) {
         switch (view.getId()) {
@@ -73,5 +92,18 @@ public class LoginActivity extends Activity {
             passEdit.setError(null);
         }
         return valid;
+    }
+    private boolean isFristRun() {
+        SharedPreferences sharedPreferences = this.getSharedPreferences(
+                "share", MODE_PRIVATE);
+        boolean isFirstRun = sharedPreferences.getBoolean("isFirstRun", true);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        if (!isFirstRun) {
+            return false;
+        } else {
+            editor.putBoolean("isFirstRun", false);
+            editor.apply();
+            return true;
+        }
     }
 }

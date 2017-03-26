@@ -3,82 +3,147 @@
 	android:orientation="vertical"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<LinearLayout
-		android:orientation="horizontal"
-		android:gravity="center"
+
+	<Space
 		android:layout_width="match_parent"
-		android:layout_height="wrap_content"
-		>
-		<TextView
-				android:text="@string/me"
-				android:textSize="26sp"
-				android:layout_width="wrap_content"
-				android:layout_height="wrap_content"/>
-	</LinearLayout>
+		android:layout_height="20dp" />
+
 	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
 		android:orientation="horizontal"
-		android:gravity="center">
+		android:gravity="start"
+		android:background="@color/white">
+		<ImageView
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginRight="10dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:src="@mipmap/ic_account"/>
 		<TextView
-			android:layout_width="0dp"
-			android:layout_height="wrap_content"
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
 			android:text="@string/user_name"
-			android:textSize="16sp"
-			android:layout_weight="1.0"/>
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
 		<TextView
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/user_name"
-			android:textSize="16sp"
-			android:layout_weight="1.0"/>
+			android:text="测试"
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
 	</LinearLayout>
+	<Space
+		android:layout_width="match_parent"
+		android:layout_height="20dp" />
 	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
 		android:orientation="horizontal"
-		android:gravity="center">
-		<TextView
+		android:gravity="start"
+		android:background="@color/white">
+		<ImageView
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginRight="10dp"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
-			android:text="@string/name"
-			android:textSize="16sp"/>
+			android:layout_height="match_parent"
+			android:src="@mipmap/ic_emo_yellow"/>
 		<TextView
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
+			android:text="@string/name"
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
+		<TextView
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
 			android:id="@+id/realName"
-			android:textSize="16sp"/>
+			android:text="测试"
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
 	</LinearLayout>
+	<Space
+		android:layout_width="match_parent"
+		android:layout_height="20dp" />
 	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
 		android:orientation="horizontal"
-		android:gravity="center">
-		<TextView
+		android:gravity="start"
+		android:background="@color/white">
+		<ImageView
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginRight="10dp"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
+			android:src="@mipmap/star"/>
+		<TextView
+			android:layout_marginLeft="20dp"
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
 			android:text="@string/NumberSigned"
-			android:textSize="16sp"/>
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
 		<TextView
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/nmber_check"
-			android:textSize="16sp"/>
+			android:id="@+id/check_number"
+			android:text="测试"
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
 	</LinearLayout>
+	<Space
+		android:layout_width="match_parent"
+		android:layout_height="20dp" />
 	<LinearLayout
-		android:layout_width="wrap_content"
-		android:layout_height="wrap_content"
+		android:layout_width="match_parent"
+		android:layout_height="60dp"
 		android:orientation="horizontal"
-		android:gravity="center">
-		<TextView
+		android:gravity="start"
+		android:background="@color/white">
+		<ImageView
+			android:layout_marginLeft="18dp"
+			android:layout_marginTop="8dp"
+			android:layout_marginRight="10dp"
 			android:layout_width="wrap_content"
-			android:layout_height="wrap_content"
+			android:layout_height="match_parent"
+			android:src="@mipmap/ic_run"/>
+		<TextView
+			android:layout_marginLeft="18dp"
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
 			android:text="@string/TimeUsed"
-			android:textSize="16sp"/>
-		<TextView
+			android:textSize="18sp"
+			android:textColor="@color/orange_bg"/>
+		<com.hanks.htextview.HTextView
+			android:id="@+id/timeused"
+			android:layout_marginTop="25dp"
+			android:layout_marginRight="5dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:id="@+id/timeused"
-			android:textSize="16sp"/>
+			android:gravity="center"
+			android:background="#ffffff"
+			android:textColor="#fe864b"
+			android:textSize="18sp" />
 	</LinearLayout>
 </LinearLayout>

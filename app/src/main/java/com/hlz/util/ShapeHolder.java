@@ -1,4 +1,4 @@
-package com.hlz.myAnimation;
+package com.hlz.util;
 
 /**
  * Created by Hanlizhi on 2016/10/24.

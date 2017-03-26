@@ -1,4 +1,4 @@
-package com.hlz.myAnimation;
+package com.hlz.util;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -138,7 +138,7 @@ public class addGreens  extends View implements ValueAnimator.AnimatorUpdateList
                 | green / 4 << 8 | blue / 4;
         // 创建圆形渐变
         RadialGradient gradient = new RadialGradient(
-                37.5f, 12.5f, BALL_SIZE, color, darkColor
+                37.5f, 12.5f, BALL_SIZE,color, darkColor
                 , Shader.TileMode.CLAMP);
         paint.setShader(gradient);
         // 为shapeHolder设置paint画笔

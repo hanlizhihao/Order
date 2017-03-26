@@ -1,6 +1,5 @@
 package com.hlz.activity;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,11 +15,12 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.hlz.order.R;
+import com.hlz.util.AppManager;
 import com.hlz.util.CharacterParser;
 import com.hlz.util.ClearEditText;
 import com.hlz.util.PinyinComparator;
 import com.hlz.util.SideBar;
-import com.hlz.util.SortAdapter;
+import com.hlz.adapter.SortAdapter;
 import com.hlz.util.SortModel;
 
 import java.util.ArrayList;
@@ -54,12 +54,8 @@ public class MakeOrder extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_order);
         realative=(RelativeLayout)findViewById(R.id.cart);
-        Toolbar toolbar=(Toolbar)findViewById(R.id.toolbar);
-        toolbar.setLogo(R.mipmap.ic_launcher);
-        toolbar.setTitle("点菜宝");
-        toolbar.setSubtitle("创建餐桌");
-        setSupportActionBar(toolbar);
         initViews();
+        AppManager.getAppManager().addActivity(this);
     }
     private void initViews() {
         //实例化汉字转拼音类

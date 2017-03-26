@@ -1,4 +1,4 @@
-package com.hlz.order;
+package com.hlz.activity;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,11 +10,12 @@ import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
-
+import com.hlz.animationlibrary.CubeOutTransformer;
 import com.hlz.fragment.ContactsFragment;
 import com.hlz.fragment.DiscoverFragment;
 import com.hlz.fragment.MeFragment;
 import com.hlz.fragment.chatsFragment;
+import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.DoubleClickExitHelper;
 import com.hlz.util.MonitoringTime;
@@ -98,6 +99,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         main_viewPager.setCurrentItem(0);
         //ViewPager的页面改变监听器
         main_viewPager.setOnPageChangeListener(new MyListner());
+        main_viewPager.setPageTransformer(true,new CubeOutTransformer());
     }
     public class MyAdapter extends FragmentStatePagerAdapter
     {

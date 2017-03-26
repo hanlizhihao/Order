@@ -1,4 +1,4 @@
-package com.hlz.util;
+package com.hlz.adapter;
 
 /**
  * Created by Hanlizhi on 2016/10/16.
@@ -18,7 +18,8 @@ import android.widget.Toast;
 
 import com.hlz.entity.ShoppingCart;
 import com.hlz.order.R;
-import com.hlz.myAnimation.addGreens;
+import com.hlz.util.addGreens;
+import com.hlz.util.SortModel;
 
 import java.util.List;
 
@@ -33,7 +34,6 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
     /**接下来的值用于标识购物车图标是否改变
      * 逻辑是如果点一次plus则对这个值加1，当点minus则对这个值减1，如果减一之后为0，再更改购物车的图标
      */
-    private int CartChangedSign=0;
     public SortAdapter(Context mContext, List<SortModel> list, ImageView imageView, RelativeLayout relativeLayout
     ,TextView sumSize,TextView sumPrice) {
         this.mContext = mContext;
@@ -67,38 +67,31 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
     }
 
     public View getView(final int position, View view, ViewGroup arg2) {
-        ViewHolder viewHolder = null;
+        final int[] SingleSize = {0};//单菜品选择的数量
+        final int[] CartChangedSign = {0};
         final SortModel mContent = list.get(position);
-        if (view == null) {
-            viewHolder = new ViewHolder();
-            view = LayoutInflater.from(mContext).inflate(R.layout.item_makeorder, null);
-            viewHolder.tvTitle = (TextView) view.findViewById(R.id.title);//具体是那个菜
-            viewHolder.tvLetter = (TextView) view.findViewById(R.id.catalog);
-            viewHolder.tvButton=(ImageButton)view.findViewById(R.id.make_order);
-            viewHolder.deleteOrder=(ImageButton)view.findViewById(R.id.delete_order);
-            viewHolder.OrderSingleSize=(TextView)view.findViewById(R.id.make_order_single_size);
-            view.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) view.getTag();
-        }
-
+        view = LayoutInflater.from(mContext).inflate(R.layout.item_makeorder, null);
+        final TextView tvTitle = (TextView) view.findViewById(R.id.title);//具体是那个菜
+        final TextView tvLetter = (TextView) view.findViewById(R.id.catalog);
+        final ImageButton[] tvButton = {(ImageButton) view.findViewById(R.id.make_order)};
+        final ImageButton[] deleteOrder = {(ImageButton) view.findViewById(R.id.delete_order)};
+        final TextView OrderSingleSize=(TextView)view.findViewById(R.id.make_order_single_size);
         //根据position获取分类的首字母的Char ascii值
         int section = getSectionForPosition(position);
 
         //如果当前位置等于该分类首字母的Char的位置 ，则认为是第一次出现
         if(position == getPositionForSection(section)){
-            viewHolder.tvLetter.setVisibility(View.VISIBLE);
-            viewHolder.tvLetter.setText(mContent.getSortLetters());
+            tvLetter.setVisibility(View.VISIBLE);
+            tvLetter.setText(mContent.getSortLetters());
         }else{
-            viewHolder.tvLetter.setVisibility(View.GONE);
+            tvLetter.setVisibility(View.GONE);
         }
         /**
          * 表示这行的菜品Name
          */
-        viewHolder.tvTitle.setText(this.list.get(position).getName());
-        final ViewHolder finalViewHolder = viewHolder;
+        tvTitle.setText(this.list.get(position).getName());
         final String order_name=this.list.get(position).getName();
-        viewHolder.tvButton.setOnClickListener(new View.OnClickListener() {
+        tvButton[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**
@@ -108,19 +101,16 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 anim.init((ImageButton) v,orderCart);
                 relativeLayout.addView(anim);
                 anim.initView();
-                if (CartChangedSign>0){
+                if (CartChangedSign[0] >0){
                 }
                 else{
                     //更改购物车图标
                     orderCart.setBackgroundResource(R.mipmap.cart_pressed);
                 }
-                if (finalViewHolder.deleteShow){
-                }else{
-                   finalViewHolder.deleteOrder.setVisibility(View.VISIBLE); //设置删除图标显示
-                }
-                CartChangedSign=CartChangedSign+1;
+                deleteOrder[0].setVisibility(View.VISIBLE); //设置删除图标显示
+                CartChangedSign[0] = CartChangedSign[0] +1;
                 //接下来添加菜品
-                Boolean result=shoppingCart.addSingleSize(finalViewHolder.tvTitle.getText().toString());
+                Boolean result=shoppingCart.addSingleSize(tvTitle.getText().toString());
                 if (result){
                     String SumNumber=mContext.getResources().getString(R.string.sumSize)
                             +shoppingCart.getOrder_size().toString();
@@ -128,8 +118,8 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                     String sumPriceNumber=mContext.getResources().getString(R.string.sumPrice)+
                             Double.toString(Math.round(shoppingCart.getPrice()*100)/100.0)+"元";
                     sumPrice.setText(sumPriceNumber);
-                    finalViewHolder.SingleSize=finalViewHolder.SingleSize+1;
-                    finalViewHolder.OrderSingleSize.setText(Integer.toString(finalViewHolder.SingleSize));
+                    SingleSize[0] = SingleSize[0] +1;
+                    OrderSingleSize.setText(Integer.toString(SingleSize[0]));
                     Log.d("TAG","添加成功");
                 }else
                 {
@@ -137,7 +127,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 }
             }
         });
-        viewHolder.deleteOrder.setOnClickListener(new View.OnClickListener() {
+        deleteOrder[0].setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 /**
@@ -148,17 +138,16 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 if (null==SingleSize){
                     Toast toast=Toast.makeText(mContext,"您还没有点这个菜，不用删除",Toast.LENGTH_SHORT);
                     toast.show();
-                    finalViewHolder.deleteOrder.setVisibility(View.GONE);
-                    finalViewHolder.deleteShow=false;
+                    deleteOrder[0].setVisibility(View.GONE);
                 }else{
-                    if (finalViewHolder.SingleSize==1){
-                        finalViewHolder.deleteOrder.setVisibility(View.GONE);
-                        CartChangedSign=CartChangedSign-1;
-                        if (CartChangedSign<=0){
+                    if (SingleSize==1){
+                        deleteOrder[0].setVisibility(View.GONE);
+                        CartChangedSign[0] = CartChangedSign[0] -1;
+                        if (CartChangedSign[0] <=0){
                             orderCart.setBackgroundResource(R.mipmap.cart);
                         }
                         //接下来删除购物车里的菜品
-                        Boolean result=shoppingCart.deleteSingleSize(finalViewHolder.tvTitle.getText().toString());
+                        Boolean result=shoppingCart.deleteSingleSize(tvTitle.getText().toString());
                         if (result){
                             String sumsize=mContext.getResources().getString(R.string.sumSize)+
                                     shoppingCart.getOrder_size().toString();
@@ -167,11 +156,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                             String sumprice=mContext.getResources().getString(R.string.sumPrice)+
                                     Double.toString(Math.round(shoppingCart.getPrice()*100)/100.0)+"元";
                             sumPrice.setText(sumprice);
-                            finalViewHolder.SingleSize=finalViewHolder.SingleSize-1;
-                            finalViewHolder.OrderSingleSize.setText(Integer.toString(finalViewHolder.SingleSize));
-                            if (finalViewHolder.SingleSize==0)
+                            SingleSize=SingleSize-1;
+                            OrderSingleSize.setText(Integer.toString(SingleSize));
+                            if (SingleSize==0)
                             {
-                                finalViewHolder.OrderSingleSize.setText("");
+                                OrderSingleSize.setText("");
                             }
                             Log.d("TAG","删除成功");
                         }else
@@ -179,11 +168,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                             Log.d("TAG","删除失败");
                         }
                     }else{
-                        CartChangedSign=CartChangedSign-1;
-                        if (CartChangedSign<=0){
+                        CartChangedSign[0] = CartChangedSign[0] -1;
+                        if (CartChangedSign[0] <=0){
                             orderCart.setBackgroundResource(R.mipmap.cart);
                         }
-                        Boolean result=shoppingCart.deleteSingleSize(finalViewHolder.tvTitle.getText().toString());
+                        Boolean result=shoppingCart.deleteSingleSize(tvTitle.getText().toString());
                         if (result){
                             String sumsize=mContext.getResources().getString(R.string.sumSize)
                                     +shoppingCart.getOrder_size().toString();
@@ -191,11 +180,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                             String sumprice=mContext.getResources().getString(R.string.sumPrice)
                                     +Double.toString(Math.round(shoppingCart.getPrice()*100)/100.0)+"元";
                             sumPrice.setText(sumprice);
-                            finalViewHolder.SingleSize=finalViewHolder.SingleSize-1;
-                            finalViewHolder.OrderSingleSize.setText(Integer.toString(finalViewHolder.SingleSize));
-                            if (finalViewHolder.SingleSize==0)
+                            SingleSize=SingleSize-1;
+                            OrderSingleSize.setText(Integer.toString(SingleSize));
+                            if (SingleSize==0)
                             {
-                                finalViewHolder.OrderSingleSize.setText("");
+                                OrderSingleSize.setText("");
                             }
                             Log.d("TAG","删除成功");
                         }else
@@ -207,15 +196,6 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
             }
         });
         return view;
-    }
-    private final static class ViewHolder {
-        TextView tvLetter;
-        TextView tvTitle;
-        ImageButton tvButton;
-        ImageButton deleteOrder;
-        TextView OrderSingleSize;//单个菜品选择的数量的视图组件
-        int SingleSize=0;//单菜品选择的数量
-        Boolean deleteShow=false;//初始时，delete图标没有显示
     }
     /**
      * 根据ListView的当前位置获取分类的首字母的Char ascii值

@@ -51,10 +51,7 @@ public class MonitoringTime{
         if (endTime!=null){
             //看是否是同一天，如果不是则删除showTime，重新计算
             Boolean nextday=date.toString().substring(0,9).equals(endTime.substring(0,9));
-            if (nextday){
-
-            }else
-            {
+            if (!nextday) {
                 editor.remove("showTime");
                 editor.commit();
             }
@@ -124,7 +121,7 @@ public class MonitoringTime{
                         }
                         msg.setData(bundle);
                         handler.sendMessage(msg);
-                        Thread.sleep(2000);
+                        Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }

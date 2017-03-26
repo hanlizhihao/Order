@@ -13,6 +13,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.hanks.htextview.HTextView;
+import com.hanks.htextview.HTextViewType;
 import com.hlz.order.R;
 import com.hlz.util.MonitoringTime;
 
@@ -22,13 +24,14 @@ public class MeFragment extends Fragment
     public View onCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState)
     {
         View v = inflater.inflate(R.layout.me_fragment,container,false) ;
-        final TextView timeUsed=(TextView)v.findViewById(R.id.timeused);
+        final HTextView timeUsed=(HTextView)v.findViewById(R.id.timeused);
         Handler handler=new Handler(){
             @Override
             public void handleMessage(Message msg) {
                 if (msg.what==0x123){
                     String showTime=msg.getData().getString("showTime");
-                    timeUsed.setText(showTime);
+                    timeUsed.setAnimateType(HTextViewType.RAINBOW);//TYPER
+                    timeUsed.animateText(showTime);
                 }
             }
         };

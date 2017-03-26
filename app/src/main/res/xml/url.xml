@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<url>
+    <Node Key="login"
+        Expires="0"
+        NetType="post"
+        Url="http://10.10.64.153:8080/login"/>
+</url>
