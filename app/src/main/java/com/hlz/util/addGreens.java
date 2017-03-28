@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import java.util.ArrayList;
 
 /**
+ * 点菜动画
  * Created by Hanlizhi on 2016/10/24.
  */
 

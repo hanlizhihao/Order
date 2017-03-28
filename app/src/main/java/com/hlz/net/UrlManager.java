@@ -1,6 +1,7 @@
 package com.hlz.net;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.XmlResourceParser;
 import com.hlz.order.R;
 import org.xmlpull.v1.XmlPullParser;
@@ -16,14 +17,14 @@ import java.util.Map;
  */
 
 class UrlManager {
-    private Map<String,URLData> urls;
+    private Map<String,URLData> urls=null;
     private UrlManager(){
 
     }
-    private URLData findURL(final Activity activity, final String findKey){
+    URLData findURL(final Context activity, final String findKey){
         if (urls==null) {
             urls=new HashMap<>();
-            final XmlResourceParser xmlParser=activity.getApplication().getResources().getXml(R.xml.url);
+            final XmlResourceParser xmlParser=activity.getResources().getXml(R.xml.url);
             int eventCode;//对应文档的节点码
             try {
                 eventCode=xmlParser.getEventType();//判断是不是到文档的最后

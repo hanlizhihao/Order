@@ -2,7 +2,7 @@ package com.hlz.entity;
 
 import android.content.Context;
 
-import com.hlz.database.DataBaseUtil;
+import com.hlz.database.DatabaseUtil;
 
 import java.util.Map;
 import java.util.TreeMap;
@@ -20,9 +20,9 @@ public class ShoppingCart {
     private Map<String,Integer> order_book;//订菜及其数量
 
     public ShoppingCart(Context context){
-        DataBaseUtil dataBaseUtil = new DataBaseUtil();
-        dataBaseUtil.DataBaseUtilInit(context);
-        this.order= dataBaseUtil.queryDatabase();
+        DatabaseUtil databaseUtil = new DatabaseUtil();
+        databaseUtil.DataBaseUtilInit(context);
+        this.order= databaseUtil.queryDatabase();
         this.order_book=new TreeMap<>();
 
     }

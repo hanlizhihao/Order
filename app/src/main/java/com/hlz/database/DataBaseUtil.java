@@ -17,7 +17,7 @@ import java.util.Map;
  * 类型的参数，然后才可以调用查询之类的参数
  */
 
-public class DataBaseUtil {
+public class DatabaseUtil {
     private SQLiteDatabase db;
     private MySQLiteHelper sqLiteHelper;
     private Context context;
@@ -25,12 +25,12 @@ public class DataBaseUtil {
         this.sqLiteHelper=new MySQLiteHelper(context,context.getFilesDir().toString()+"/Dishes.db3",1);
         this.context=context;
     }
-    public  Boolean createDatabase(Context context){
+    public  boolean createDatabase(Context context){
         try {
             db=SQLiteDatabase.openOrCreateDatabase(context.getFilesDir().toString()+"/Dishes.db3",null);
-            String sql="create table 'menu'('id' integer primary key " +
+            String sqlMenu="create table 'menu'('id' integer primary key " +
                     "autoincrement,"+"'name' varchar(255) not null," +"price double not null);";
-            db.execSQL(sql);
+            db.execSQL(sqlMenu);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -39,7 +39,7 @@ public class DataBaseUtil {
     }
     //接受一个字符串数组作为数据源存入数据库
     //假设从网络中返回了数据
-    public Boolean initExample(String[] menu){
+    public boolean initExample(String[] menu){
         try {
             double priceTest=20.2;
             int id=1;
@@ -82,14 +82,13 @@ public class DataBaseUtil {
     /**
      * 将Map类型的菜单参数写入数据库的函数
      */
-    public Boolean insertDatabase(Map<String,Double> menu){
+    public boolean insertDatabase(Map<String,Double> menu){
         try{
             SQLiteDatabase db=sqLiteHelper.getWritableDatabase();
             int line=db.delete("menu",null,null);
             Log.d("删除表中的数据行数为",Integer.toString(line));
             int id=1;
-            for (Map.Entry<String,Double> entry:menu.entrySet()
-                    ) {
+            for (Map.Entry<String,Double> entry:menu.entrySet()) {
                 insertData(db,id,entry.getKey(),entry.getValue());
                 id=id+1;
             }

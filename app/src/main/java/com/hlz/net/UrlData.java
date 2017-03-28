@@ -1,14 +1,10 @@
 package com.hlz.net;
 
-/**
+/**一次请求的数据集
  * QQ：1430261583
  * Created by Hanlizhi on 2016/11/18.
  */
-
-/**
- * 一次请求的数据集
- */
-public class URLData {
+class URLData {
     private String key;
     private long expires;
     private String netType;
@@ -17,7 +13,7 @@ public class URLData {
         return expires;
     }
 
-    public void setExpires(long expires) {
+    void setExpires(long expires) {
         this.expires = expires;
     }
 
@@ -25,7 +21,7 @@ public class URLData {
         return netType;
     }
 
-    public void setNetType(String netType) {
+    void setNetType(String netType) {
         this.netType = netType;
     }
 
@@ -33,7 +29,7 @@ public class URLData {
         return url;
     }
 
-    public void setUrl(String url) {
+    void setUrl(String url) {
         this.url = url;
     }
 
@@ -42,7 +38,7 @@ public class URLData {
         return key;
     }
 
-    public void setKey(String key) {
+    void setKey(String key) {
         this.key = key;
     }
 
