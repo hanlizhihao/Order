@@ -61,7 +61,7 @@ class UrlManager {
         }
     }
     //单例模式
-    public static UrlManager getUrlManager(){
+    static UrlManager getUrlManager(){
         return UrlManagerHolder.mInstance;
     }
     private static class UrlManagerHolder{

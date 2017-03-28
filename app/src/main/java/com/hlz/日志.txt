@@ -1,2 +1,3 @@
 1.菜单进行时界面重构
 2.login的初始化数据库部分-完成
+3.关于运行时间，记得重写每个Activity onResume和onStop就可以了-完成

@@ -15,6 +15,7 @@ import com.hlz.fragment.ContactsFragment;
 import com.hlz.fragment.DiscoverFragment;
 import com.hlz.fragment.MeFragment;
 import com.hlz.fragment.chatsFragment;
+import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.DoubleClickExitHelper;
@@ -33,19 +34,18 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private RadioButton radio_chats , radio_contacts , radio_discover , radio_me ;
     //类型为Fragment的动态数组
     private ArrayList<Fragment> fragmentList ;
-    private MonitoringTime monitoringTime;//监视使用时间
     private DoubleClickExitHelper mDoubleClickExit;
     private AppManager appManager;
     private Toolbar toolbar;
     @Override
     public void onResume(){
         super.onResume();
-        monitoringTime.start();
+        MyApplication.getMonitoringTime().start();
     }
     @Override
     public void onStop(){
         super.onStop();
-        monitoringTime.end();
+        MyApplication.getMonitoringTime().end();
     }
     @SuppressWarnings("deprecation")
     @Override
@@ -58,8 +58,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         InitView();
         //ViewPager初始化函数
         InitViewPager();
-        //初始化监视APP使用时间的类
-        monitoringTime=new MonitoringTime(MainActivity.this);
         mDoubleClickExit = new DoubleClickExitHelper(this);//双击退出
         appManager=AppManager.getAppManager();
         appManager.addActivity(this);
@@ -182,12 +180,11 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         }
     }
     /**
-     * 返回按钮的监听，用来询问用户是否退出程序
+     * 双击退出
      * */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            // 是否退出应用
             return mDoubleClickExit.onKeyDown(keyCode, event);
         }
         return super.onKeyDown(keyCode, event);

@@ -9,6 +9,10 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
     <style name="AppBaseTheme" parent="android:Theme.Holo">
         <item name="android:windowBackground">@android:color/background_light</item>
         <item name="android:actionBarStyle">@style/DarkActionBar</item>

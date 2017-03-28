@@ -148,7 +148,6 @@ public class LoginActivity extends Activity {
                     Map<String,Double> result=new HashMap<>();
                     for (Menu menu:menus){
                         result.put(menu.getGreensName(),menu.getPrice());
-                        Log.d(TAG,menu.getGreensName());
                     }
                     DatabaseUtil databaseUtil=new DatabaseUtil();
                     databaseUtil.DataBaseUtilInit(MyApplication.getContext());
@@ -158,10 +157,19 @@ public class LoginActivity extends Activity {
                                 .setBackgroundColor(R.color.colorLightBlue)
                                 .setTitle("菜单数据初始化失败！")
                                 .setText("请稍后重启App以重试")
-                                .setDuration(2000)
+                                .setDuration(3000)
                                 .show();
                     }else{
+                        Log.d(TAG,"向数据库插入菜单信息成功");
                         Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT);
+                        SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
+                        boolean islogin=sp.getBoolean("isLogin",false);
+                        hideWaitDialog();
+                        if (islogin){
+                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                            startActivity(intent);
+                            LoginActivity.this.finish();
+                        }
                     }
                 }else{
                     Toast.makeText(MyApplication.getContext(),"菜单数据获取失败",Toast.LENGTH_LONG).show();
@@ -181,7 +189,7 @@ public class LoginActivity extends Activity {
                     .setBackgroundColor(R.color.colorLightBlue)
                     .setTitle("网络出错了哟！")
                     .setText("是否接入餐厅服务器所在局域网络？")
-                    .setDuration(2000)
+                    .setDuration(3000)
                     .show();
         }
     };
@@ -222,12 +230,6 @@ public class LoginActivity extends Activity {
         }else{
             networkUtil.getMenuVersion(getMenuVersion,errorListener,TAG);
         }
-        hideWaitDialog();
-        if (islogin){
-            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-            startActivity(intent);
-            LoginActivity.this.finish();
-        }
     }
     public Response.Listener getMenuVersion=new Response.Listener<String>() {
         @Override
@@ -237,6 +239,13 @@ public class LoginActivity extends Activity {
                 String version=sp.getString("version",null);
                 if (version!=null&&s.equals(version)){
                     Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT).show();
+                    boolean islogin=sp.getBoolean("isLogin",false);
+                    hideWaitDialog();
+                    if (islogin){
+                        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
+                        startActivity(intent);
+                        LoginActivity.this.finish();
+                    }
                 }else{
                     NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
                     networkUtil.getMenu(getMenusListener,errorListener,TAG);
@@ -246,6 +255,7 @@ public class LoginActivity extends Activity {
                 }
             }else{
                 Toast.makeText(MyApplication.getContext(),"请求验证菜单失败，稍后将重试",Toast.LENGTH_LONG).show();
+                hideWaitDialog();
             }
         }
     };

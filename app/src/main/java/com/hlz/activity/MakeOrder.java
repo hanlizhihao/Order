@@ -14,6 +14,7 @@ import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.CharacterParser;
@@ -173,5 +174,15 @@ public class MakeOrder extends AppCompatActivity {
         // 根据a-z进行排序
         Collections.sort(filterDateList, pinyinComparator);
         adapter.updateListView(filterDateList);
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        MyApplication.getMonitoringTime().start();
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        MyApplication.getMonitoringTime().end();
     }
 }
