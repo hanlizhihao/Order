@@ -7,6 +7,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
+import android.widget.BaseAdapter;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -22,14 +23,12 @@ import java.util.Map;
 import java.util.TreeMap;
 
 /**
- * Created by hlz on 2017/2/9 0009
- * 10:18
+ * Created by hlz on 2017/2/9
  */
-
-public class PlanAdapter extends BaseExpandableListAdapter {
+public class UnderwayAdapter extends BaseAdapter {
     private TestDinnerTable dinnerTable=new TestDinnerTable();
     private Context context;
-    public PlanAdapter(Context context){
+    public UnderwayAdapter(Context context){
         this.context=context;
     }
     private TextView getTextView(){//设定TextView的样式
@@ -41,21 +40,6 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         textView.setTextSize(20);
         return textView;
     }
-    @Override
-    public int getGroupCount() {
-        return dinnerTable.getDinnerTables().size();//组数据长度
-    }
-
-    @Override
-    public int getChildrenCount(int groupPosition) {
-        return dinnerTable.getDinnerTables().get(groupPosition).getOrder_book().size();//子组件的长度
-    }
-
-    @Override
-    public DinnerTable getGroup(int groupPosition) {
-        return dinnerTable.getDinnerTables().get(groupPosition);//组数据
-    }
-
     //获取子组的菜单
     @Override
     public TreeMap getChild(int groupPosition, int childPosition) {
@@ -76,20 +60,29 @@ public class PlanAdapter extends BaseExpandableListAdapter {
         }
         return result;
     }
-
     @Override
-    public long getGroupId(int i) {
-        return i;
+    public int getCount() {
+        return 0;
     }
 
     @Override
-    public long getChildId(int i, int i1) {
-        return i1;
+    public Object getItem(int position) {
+        return null;
+    }
+
+    @Override
+    public long getItemId(int position) {
+        return 0;
     }
 
     @Override
     public boolean hasStableIds() {
         return true;
+    }
+
+    @Override
+    public View getView(int position, View convertView, ViewGroup parent) {
+        return null;
     }
 
     /**

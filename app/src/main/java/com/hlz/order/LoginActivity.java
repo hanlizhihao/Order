@@ -34,7 +34,11 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-/**
+/**登录页主要完成的功能有
+ * 1.登录与自动登录
+ * 2.初始化数据库
+ * 3.验证菜单版本号
+ * 4.向数据库写入菜单
  * Created by DELL on 2016/9/6.
  */
 public class LoginActivity extends Activity {

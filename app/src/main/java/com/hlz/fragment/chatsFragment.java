@@ -13,36 +13,36 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
-import android.widget.ExpandableListView;
+import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.hlz.adapter.PlanAdapter;
+import com.hlz.adapter.UnderwayAdapter;
 import com.hlz.order.R;
 
-import butterknife.ButterKnife;
-import butterknife.InjectView;
-import butterknife.OnClick;
 
 public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
 
-    ExpandableListView list;
+    ListView list;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View footView;
     private RelativeLayout loading;
     ProgressBar footerProgressbar;
     TextView footerTextview;
     private int lastItem;
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.chats_fragment, container, false);
-        list=(ExpandableListView)v.findViewById(R.id.expandList);
+    private void initView(View v){
+        list=(ListView) v.findViewById(R.id.plan_list);
         mSwipeRefreshLayout=(SwipeRefreshLayout)v.findViewById(R.id.swipe_refresh_layout);
         footView = LayoutInflater.from(getActivity()).inflate(R.layout.item_footer, null);
         loading = (RelativeLayout) footView.findViewById(R.id.xlistview_footer_content);
         footerProgressbar = (ProgressBar) footView.findViewById(R.id.xlistview_footer_progressbar);
         footerTextview = (TextView) footView.findViewById(R.id.xlistview_footer_hint_textview);
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_plan, container, false);
+        initView(v);
         //下拉加载
         list.setOnScrollListener(new AbsListView.OnScrollListener() {
             public void onScroll(AbsListView view, int firstVisibleItem,
@@ -51,15 +51,15 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             }
             public void onScrollStateChanged(AbsListView view,
                                              int scrollState) {
-                    loadData();
-                }
+                loadData();
+            }
         });
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
         list.addFooterView(footView);
-        PlanAdapter adapter = new PlanAdapter(getActivity());
+        UnderwayAdapter adapter = new UnderwayAdapter(getActivity());
         list.setAdapter(adapter);
         return v;
     }

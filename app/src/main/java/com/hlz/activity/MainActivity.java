@@ -1,5 +1,6 @@
 package com.hlz.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -8,6 +9,8 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.hlz.animationlibrary.CubeOutTransformer;
@@ -189,5 +192,26 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         }
         return super.onKeyDown(keyCode, event);
     }
-
+    /**
+     * 菜单
+     */
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.main_activity_menu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        switch (id) {
+            case R.id.add_new_order:
+                //UIHelper.showSimpleBack(this, SimpleBackPage.SEARCH);
+                Intent intent = new Intent(MainActivity.this,MakeOrder.class);
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 }

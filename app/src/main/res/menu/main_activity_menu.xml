@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:osc="http://schemas.android.com/apk/res-auto" >
+    <item
+        android:id="@+id/itemSearch"
+        android:icon="@mipmap/ic_search"
+        osc:showAsAction="ifRoom"
+        android:title=""/>
+    <item
+        android:id="@+id/add_new_order"
+        android:icon="@mipmap/ic_add"
+        android:title="@string/add_new_order"
+        android:visible="true"
+        osc:showAsAction="always"/>
+</menu>

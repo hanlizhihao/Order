@@ -24,4 +24,5 @@
     <string name="bug">测试按钮（请勿点击，有BUG）</string>
     <string name="sumSize">总数：</string>
     <string name="sumPrice">总价：</string>
+    <string name="add_new_order">添加新订单</string>
 </resources>
