@@ -19,7 +19,7 @@ public class ContactsFragment extends Fragment
     @Override
     public View onCreateView(LayoutInflater inflater , ViewGroup container , Bundle savedInstanceState)
     {
-        View v = inflater.inflate(R.layout.contacts_fragment,container,false) ;
+        View v = inflater.inflate(R.layout.fragment_history,container,false) ;
         Button makeorder=(Button) v.findViewById(R.id.f);
         makeorder.setOnClickListener(new View.OnClickListener() {
             @Override
