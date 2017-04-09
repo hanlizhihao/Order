@@ -25,4 +25,10 @@
     <string name="sumSize">总数：</string>
     <string name="sumPrice">总价：</string>
     <string name="add_new_order">添加新订单</string>
+    <string name="table_id">桌号：</string>
+    <string name="wait_time">等待时间：</string>
+    <string name="serving_progress">上菜进度：</string>
+    <string name="reminder_number">催单次数：</string>
+    <string name="details">详情</string>
+    <string name="reminder">催单</string>
 </resources>
