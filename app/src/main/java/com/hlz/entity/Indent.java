@@ -1,11 +1,13 @@
 package com.hlz.entity;
-import java.sql.Timestamp;
+
+import java.io.Serializable;
+
 /**
  * Created by Administrator on 2017/4/9 0009
  * 实体类，用于接受订单.
  */
 
-public class Indent {
+public class Indent implements Serializable{
     private Integer id;
     private String tableId;
     private String reserve;
@@ -13,15 +15,16 @@ public class Indent {
     private String fulfill;
     private Integer fulfillNumber;
     private Integer reminderNumber;
-    private Timestamp beginTime;
-    private Timestamp endTime;
-    private Timestamp firstTime;
+    private Long beginTime;
+    private Long endTime;
+    private Long firstTime;
     private Integer style;
     private Double price;
     public Indent(){
 
     }
-    public Indent(Integer id, String tableId, String reserve, Integer reserveNumber, String fulfill, Integer fulfillNumber, Integer reminderNumber, Timestamp beginTime, Timestamp endTime, Timestamp firstTime, Integer style, Double price) {
+    public Indent(Integer id, String tableId, String reserve, Integer reserveNumber, String fulfill, Integer fulfillNumber, Integer reminderNumber,
+                  Long  beginTime, Long  endTime, Long firstTime, Integer style, Double price) {
         this.id = id;
         this.tableId = tableId;
         this.reserve = reserve;
@@ -92,27 +95,27 @@ public class Indent {
         this.reminderNumber = reminderNumber;
     }
 
-    public Timestamp getBeginTime() {
+    public Long  getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(Timestamp beginTime) {
+    public void setBeginTime(Long  beginTime) {
         this.beginTime = beginTime;
     }
 
-    public Timestamp getEndTime() {
+    public Long  getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Timestamp endTime) {
+    public void setEndTime(Long  endTime) {
         this.endTime = endTime;
     }
 
-    public Timestamp getFirstTime() {
+    public Long  getFirstTime() {
         return firstTime;
     }
 
-    public void setFirstTime(Timestamp firstTime) {
+    public void setFirstTime(Long  firstTime) {
         this.firstTime = firstTime;
     }
 

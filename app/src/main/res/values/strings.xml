@@ -31,4 +31,7 @@
     <string name="reminder_number">催单次数：</string>
     <string name="details">详情</string>
     <string name="reminder">催单</string>
+    <string name="menu">菜单</string>
+    <string name="finished">结算</string>
+    <string name="change">修改</string>
 </resources>

@@ -11,6 +11,7 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
@@ -77,5 +78,17 @@ public class NetworkUtil {
     public void getUnderwayOrder(Response.Listener listener,Response.ErrorListener errorListener,String TAG){
         JsonArrayRequest request=new JsonArrayRequest(urlManager.findURL(context,"underway").getUrl(),listener,errorListener);
         queue.add(request);
+    }
+    public void updateIndent(Response.Listener listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"indent/update").getUrl(),listener,errorListener);
+        queue.add(request);
+    }
+    public void getSingleIndent(String id,Response.Listener listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"indent/id").getUrl()+id,listener,errorListener);
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void canceledRequest(String TAG){
+        queue.cancelAll(TAG);
     }
 }

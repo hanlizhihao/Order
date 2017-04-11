@@ -1,14 +1,14 @@
 package com.hlz.fragment;
-
 /**
- * Created by Administrator on 2016/9/8.
+ * 显示进度的Fragment
+ * Created by hlz on 2016/9/8.
  */
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,49 +18,87 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.reflect.TypeToken;
+import com.hlz.activity.MainActivity;
 import com.hlz.adapter.UnderwayAdapter;
+import com.hlz.entity.Indent;
+import com.hlz.net.NetworkUtil;
+import com.hlz.order.LoginActivity;
+import com.hlz.order.MyApplication;
 import com.hlz.order.R;
+import com.lqr.recyclerview.LQRRecyclerView;
+import com.tapadoo.alerter.Alerter;
+
+import java.security.PublicKey;
+import java.util.List;
 
 
 public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
-
+    String TAG="planFragment";
+    private UnderwayAdapter adapter;
     ListView list;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View footView;
     private RelativeLayout loading;
+    LQRRecyclerView planList;
     ProgressBar footerProgressbar;
     TextView footerTextview;
     private int lastItem;
+    private List<Indent> indents;//网络请求的Indent数据集
+    private MainActivity mainActivity;
     private void initView(View v){
-        list=(ListView) v.findViewById(R.id.plan_list);
         mSwipeRefreshLayout=(SwipeRefreshLayout)v.findViewById(R.id.swipe_refresh_layout);
-        footView = LayoutInflater.from(getActivity()).inflate(R.layout.item_footer, null);
+        footView = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.item_footer, null);
         loading = (RelativeLayout) footView.findViewById(R.id.xlistview_footer_content);
-        footerProgressbar = (ProgressBar) footView.findViewById(R.id.xlistview_footer_progressbar);
-        footerTextview = (TextView) footView.findViewById(R.id.xlistview_footer_hint_textview);
+        footerProgressbar = (ProgressBar) footView.findViewById(R.id.foot_progressbar);
+        footerTextview = (TextView) footView.findViewById(R.id.foot_text);
+        planList=(LQRRecyclerView)v.findViewById(R.id.plan_list);
+        mainActivity=(MainActivity) getActivity();
+        initUnderwayData();
+        mainActivity.showWaitDialog("正在获取订单信息");
+    }
+    public void initUnderwayData(){
+        NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
+        networkUtil.getUnderwayOrder(getUnderwayDataListener,errorListener,TAG);
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_plan, container, false);
         initView(v);
         //下拉加载
-        list.setOnScrollListener(new AbsListView.OnScrollListener() {
-            public void onScroll(AbsListView view, int firstVisibleItem,
-                                 int visibleItemCount, int totalItemCount) {
-                lastItem = firstVisibleItem + visibleItemCount;
-            }
-            public void onScrollStateChanged(AbsListView view,
-                                             int scrollState) {
+        planList.setOnScrollListenerExtension(new LQRRecyclerView.OnScrollListenerExtension() {
+            @Override
+            public void onScrollStateChanged(RecyclerView recyclerView, int newState) {
                 loadData();
+            }
+            @Override
+            public void onScrolled(RecyclerView recyclerView, int dx, int dy) {
+                lastItem = dx + dy;
             }
         });
         mSwipeRefreshLayout.setOnRefreshListener(this);
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
-        list.addFooterView(footView);
-        UnderwayAdapter adapter = new UnderwayAdapter(getActivity());
-        list.setAdapter(adapter);
+        adapter = new UnderwayAdapter(mainActivity,indents);
+        planList.setAdapter(adapter);
+        //持续的改变等待时间
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                adapter.notifyDataSetChanged();
+                try {
+                    Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
         return v;
     }
     protected void loadData() {
@@ -88,7 +126,6 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             mSwipeRefreshLayout.setEnabled(false);
         }
     }
-
     /**
      * 设置顶部加载完毕的状态
      */
@@ -98,7 +135,6 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             mSwipeRefreshLayout.setEnabled(true);
         }
     }
-
     Handler handler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -107,10 +143,10 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             setSwipeRefreshLoadedState();
         }
     };
-
     @Override
     public void onRefresh() {
-        handler.sendEmptyMessageDelayed(1, 1000);
+        NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
+        networkUtil.getUnderwayOrder(getUnderwayDataListener,errorListener,TAG);
         //具体的数据更新操作，网络请求+数据更新
         //这是个回调函数，将在发生下拉手势时被回调执行
     }
@@ -123,4 +159,27 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onDestroyView() {
         super.onDestroyView();
     }
+    public Response.Listener getUnderwayDataListener=new Response.Listener<JsonArray>() {
+        @Override
+        public void onResponse(JsonArray o) {
+            if (o!=null&&!o.isJsonNull()&&o.isJsonArray()){
+                Gson gson=new Gson();
+                indents=gson.fromJson(o,new TypeToken<List<Indent>>(){}.getType());
+                mainActivity.hideWaitDialog();
+                handler.sendEmptyMessage(1);
+            }
+        }
+    };
+    public Response.ErrorListener errorListener=new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            mainActivity.hideWaitDialog();
+            Alerter.create(mainActivity)
+                    .setBackgroundColor(R.color.colorLightBlue)
+                    .setTitle("网络出错了哟！")
+                    .setText("您可能与服务器失去连接！")
+                    .setDuration(3000)
+                    .show();
+        }
+    };
 }

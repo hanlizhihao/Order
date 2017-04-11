@@ -1,0 +1,287 @@
+package com.hlz.activity;
+
+import android.app.ProgressDialog;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.design.widget.AppBarLayout;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.widget.AbsListView;
+import android.widget.Button;
+import android.widget.ListView;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.hlz.database.DatabaseUtil;
+import com.hlz.entity.Indent;
+import com.hlz.net.NetworkUtil;
+import com.hlz.order.R;
+import com.hlz.util.AppManager;
+import com.hlz.util.DialogHelp;
+import com.tapadoo.alerter.Alerter;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import butterknife.ButterKnife;
+import butterknife.InjectView;
+
+/**
+ * 正在进行订单的详情页，主要功能有：
+ * 1.对单个订单进行结算或者修改。
+ * 要求是：在结算前提示是否验证手机以及对总价的更改，修改后如果要退出Activity则提示是否保存更改
+ * 2.具有toolBar，对不同的订单，显示不同toolBar
+ */
+public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+    private boolean _isVisible=true;
+    private ProgressDialog _waitDialog;
+    public final String TAG = "UnderwayDetailsActivity";
+    @InjectView(R.id.toolbar)
+    Toolbar toolbar;
+    @InjectView(R.id.underway_details_list)
+    ListView underwayDetailsList;
+    @InjectView(R.id.finished_indent)
+    Button finishedIndent;
+    @InjectView(R.id.update_indent)
+    Button updateIndent;
+    @InjectView(R.id.app_bar_layout)
+    AppBarLayout appBarLayout;
+    @InjectView(R.id.swipe_refresh_layout)
+    SwipeRefreshLayout refreshLayout;
+    private ListView list;
+    public class IndentMenu {
+        private String name;
+        private String reserveNumber;
+        private String fulfillNumber;
+        private String price;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+
+        public String getReserveNumber() {
+            return reserveNumber;
+        }
+
+        public void setReserveNumber(String reserveNumber) {
+            this.reserveNumber = reserveNumber;
+        }
+
+        public String getFulfillNumber() {
+            return fulfillNumber;
+        }
+
+        public void setFulfillNumber(String fulfillNumber) {
+            this.fulfillNumber = fulfillNumber;
+        }
+
+        public String getPrice() {
+            return price;
+        }
+
+        public void setPrice(String price) {
+            this.price = price;
+        }
+    }
+    private List<IndentMenu> indentMenus;
+    private AppManager manager;
+    private Indent indent;
+    private Map<String, Double> menus;//数据库中的菜单
+    private int lastItem;
+    private NetworkUtil networkUtil;
+    public boolean listIsChanged=false;
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_underway_details);
+        showWaitDialog("正在努力加载数据...");
+        ButterKnife.inject(this);
+        //取出传递过来的数据，tableID,reserve,fulfill,reminderNumber,id
+        Intent intent = getIntent();
+        indent = new Indent();
+        indent.setReserve(intent.getStringExtra("reserve"));
+        indent.setFulfill(intent.getStringExtra("fulfill"));
+        indent.setTableId(intent.getStringExtra("tableID"));
+        indent.setId(Integer.valueOf(intent.getStringExtra("id")));
+        indent.setReminderNumber(Integer.valueOf(intent.getStringExtra("reminderNumber")));
+        //堆栈式管理
+        manager = AppManager.getAppManager();
+        manager.addActivity(this);
+        //获取数据库中存储的菜单数据
+        DatabaseUtil databaseUtil = new DatabaseUtil();
+        menus = databaseUtil.queryDatabase();
+        setIndentMenus(indent);//设置数据源
+        //初始化toolBar
+        initToolBar();
+        //初始化下拉刷新
+        list.setOnScrollListener(new AbsListView.OnScrollListener() {
+            public void onScroll(AbsListView view, int firstVisibleItem,
+                                 int visibleItemCount, int totalItemCount) {
+                lastItem = firstVisibleItem + visibleItemCount;
+            }
+            public void onScrollStateChanged(AbsListView view,
+                                             int scrollState) {
+            }
+        });
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(
+                R.color.swiperefresh_color1, R.color.swiperefresh_color2,
+                R.color.swiperefresh_color3, R.color.swiperefresh_color4);
+        networkUtil=NetworkUtil.getNetworkUtil();
+        //设置Adapter
+
+    }
+    @Override
+    public void onRefresh() {
+        networkUtil.getSingleIndent(indent.getId().toString(),getSingleIndentById,errorListener,TAG);
+    }
+    private Response.Listener getSingleIndentById=new Response.Listener<JsonObject>() {
+        @Override
+        public void onResponse(JsonObject o) {
+            Gson gson=new Gson();
+            indent=gson.fromJson(o,Indent.class);
+            setIndentMenus(indent);
+            //Adapter更新
+            handler.sendEmptyMessage(1);
+        }
+    };
+    public Response.ErrorListener errorListener=new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            Alerter.create(UnderwayDetailsActivity.this)
+                    .setBackgroundColor(R.color.colorLightBlue)
+                    .setTitle("网络出错了哟！")
+                    .setText("您可能与服务器失去连接！")
+                    .setDuration(2000)
+                    .show();
+        }
+    };
+    Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            //停止刷新
+            setSwipeRefreshLoadedState();
+        }
+    };
+    /**
+     * 设置顶部加载完毕的状态
+     */
+    protected void setSwipeRefreshLoadedState() {
+        if (refreshLayout != null) {
+            refreshLayout.setRefreshing(false);
+            refreshLayout.setEnabled(true);
+        }
+    }
+    private void initToolBar() {
+        toolbar.setTitle("桌号：" + indent.getTableId());
+        toolbar.setSubtitle("催单次数：" + indent.getReminderNumber());
+        setSupportActionBar(toolbar);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        manager.finishActivity();
+    }
+
+    /**
+     * 设置数据源
+     *
+     * @param indent 由Intent传递过来的参数
+     */
+    public void setIndentMenus(Indent indent) {
+        String reserve = indent.getReserve();
+        String fulfill = indent.getFulfill();
+        /*对字符串进行处理，基于默认的格式：
+          地三鲜a1e，这样的格式*/
+        reserve = reserve.substring(0, reserve.length() - 1);
+        if (fulfill != null) {
+            fulfill = fulfill.substring(0, fulfill.length() - 1);
+            String[] reserves = reserve.split("e");
+            String[] fulfills = fulfill.split("e");
+            Map<String, String> fulfillMap = new HashMap<>();
+            for (String f : fulfills) {
+                String[] fArray = f.split("a");
+                fulfillMap.put(fArray[0], fArray[1]);
+            }
+            for (int i = 0; i < reserves.length; i++) {
+                String[] singleMenuReserve = reserves[i].split("a");
+                IndentMenu indentMenu = new IndentMenu();
+                indentMenu.setName(singleMenuReserve[0]);
+                indentMenu.setReserveNumber(singleMenuReserve[1]);
+                String sign = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
+                indentMenu.setFulfillNumber(sign);
+                indentMenu.setPrice(getSingleGreensPrice(menus, singleMenuReserve[0], singleMenuReserve[1]));
+                indentMenus.add(indentMenu);
+            }
+        } else {
+            String[] reserves = reserve.split("e");
+            for (int i = 0; i < reserve.length(); i++) {
+                String[] singleMenuReserve = reserves[i].split("a");
+                IndentMenu indentMenu = new IndentMenu();
+                indentMenu.setName(singleMenuReserve[0]);
+                indentMenu.setReserveNumber(singleMenuReserve[1]);
+                indentMenu.setFulfillNumber("0");
+                indentMenus.add(indentMenu);
+            }
+        }
+    }
+
+    //验证菜名是否在上菜的列表中
+    private String validateHasFulfill(Map<String, String> fulfill, String reserveName) {
+        Set<String> set = fulfill.keySet();
+        if (set.contains(reserveName)) {
+            return fulfill.get(reserveName);
+        } else {
+            return "0";
+        }
+    }
+
+    private String getSingleGreensPrice(Map<String, Double> menuMap, String reserveName, String reserveNumber) {
+        Double price = menuMap.get(reserveName);
+        if (price == null) {
+            Log.d(TAG, "订单中的菜，菜单中竟然没有！");
+            return "0";
+        } else {
+            price = price * Integer.valueOf(reserveNumber);
+            return price.toString();
+        }
+    }
+    //进度对话框
+    public ProgressDialog showWaitDialog(String message) {
+        if (_isVisible) {
+            if (_waitDialog == null) {
+                _waitDialog = DialogHelp.getWaitDialog(this, message);
+            }
+            if (_waitDialog != null) {
+                _waitDialog.setMessage(message);
+                _waitDialog.show();
+            }
+            return _waitDialog;
+        }
+        return null;
+    }
+    public void hideWaitDialog() {
+        if (_isVisible && _waitDialog != null) {
+            try {
+                _waitDialog.dismiss();
+                _waitDialog = null;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+    }
+}

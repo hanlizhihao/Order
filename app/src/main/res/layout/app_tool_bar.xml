@@ -20,5 +20,6 @@
         app:contentInsetEnd="5dp"
         app:contentInsetLeft="5dp"
         app:contentInsetRight="5dp"
+        app:layout_scrollFlags="scroll"
         />
 </android.support.design.widget.AppBarLayout>

@@ -1,7 +1,7 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion "25.0.2"
     defaultConfig {
         applicationId "com.hlz.order"
@@ -32,11 +32,13 @@ dependencies {
     compile files('libs/butterknife-5.1.2.jar')
     compile files('libs/Volley.jar')
     compile files('libs/androidannotations-api-3.2.jar')
-    compile 'com.android.support:design:23.4.0'
-    compile 'com.android.support:support-v4:23.4.0'
+    compile 'com.android.support:support-v4:25.0.1'
+    compile 'com.android.support:design:25.0.1'
     compile 'hanks.xyz:htextview-library:0.1.5'
     compile 'com.tapadoo.android:alerter:1.0.6'
     compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.support:recyclerview-v7:23.4.0'
+    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     testCompile 'junit:junit:4.12'
+    compile 'com.lqr.recyclerview:library:1.0.2'
 }

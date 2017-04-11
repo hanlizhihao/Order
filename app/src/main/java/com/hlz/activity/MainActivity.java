@@ -1,5 +1,6 @@
 package com.hlz.activity;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -21,6 +22,7 @@ import com.hlz.fragment.chatsFragment;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
+import com.hlz.util.DialogHelp;
 import com.hlz.util.DoubleClickExitHelper;
 import com.hlz.util.MonitoringTime;
 
@@ -28,6 +30,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener
 {
+    private boolean _isVisible=true;
+    private ProgressDialog _waitDialog;
     private int mSelectedItem;
     //ViewPager控件
     private ViewPager main_viewPager ;
@@ -213,5 +217,29 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //进度对话框
+    public ProgressDialog showWaitDialog(String message) {
+        if (_isVisible) {
+            if (_waitDialog == null) {
+                _waitDialog = DialogHelp.getWaitDialog(this, message);
+            }
+            if (_waitDialog != null) {
+                _waitDialog.setMessage(message);
+                _waitDialog.show();
+            }
+            return _waitDialog;
+        }
+        return null;
+    }
+    public void hideWaitDialog() {
+        if (_isVisible && _waitDialog != null) {
+            try {
+                _waitDialog.dismiss();
+                _waitDialog = null;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

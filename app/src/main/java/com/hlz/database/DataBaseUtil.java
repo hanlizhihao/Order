@@ -20,10 +20,8 @@ import java.util.Map;
 public class DatabaseUtil {
     private SQLiteDatabase db;
     private MySQLiteHelper sqLiteHelper;
-    private Context context;
     public void DataBaseUtilInit(Context context){
         this.sqLiteHelper=new MySQLiteHelper(context,context.getFilesDir().toString()+"/Dishes.db3",1);
-        this.context=context;
     }
     public  boolean createDatabase(Context context){
         try {
@@ -31,22 +29,6 @@ public class DatabaseUtil {
             String sqlMenu="create table 'menu'('id' integer primary key " +
                     "autoincrement,"+"'name' varchar(255) not null," +"price double not null);";
             db.execSQL(sqlMenu);
-            return true;
-        }catch (Exception e){
-            e.printStackTrace();
-            return false;
-        }
-    }
-    //接受一个字符串数组作为数据源存入数据库
-    //假设从网络中返回了数据
-    public boolean initExample(String[] menu){
-        try {
-            double priceTest=20.2;
-            int id=1;
-            for (int i=0;i<menu.length;i++){
-                insertData(db,id,menu[i],priceTest);
-                id++;
-            }
             return true;
         }catch (Exception e){
             e.printStackTrace();
