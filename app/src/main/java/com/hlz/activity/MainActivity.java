@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import com.hlz.animationlibrary.CubeOutTransformer;
+import com.hlz.entity.Indent;
 import com.hlz.fragment.ContactsFragment;
 import com.hlz.fragment.DiscoverFragment;
 import com.hlz.fragment.MeFragment;
@@ -27,6 +28,7 @@ import com.hlz.util.DoubleClickExitHelper;
 import com.hlz.util.MonitoringTime;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener
 {
@@ -217,6 +219,37 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+    //用于获取UnderwayDetailsActivity返回的结果
+    @Override
+    public void onActivityResult(int requestCode,int resultCode,Intent intent){
+        if (requestCode==0&&resultCode==0){
+            if (!"".equals(intent.getStringExtra("reserveChanged"))){
+                String reserve=intent.getStringExtra("reserveChanged");
+                String fulfill=intent.getStringExtra("fulfillChanged");
+                String id=intent.getStringExtra("id");
+                Integer reserveNumber=reserve.substring(0,reserve.length()-1).length();
+                Integer fulfillNumber=fulfill.substring(0,fulfill.length()-1).length();
+                //获取到Adapter的数据源
+                FragmentManager manager=getSupportFragmentManager();
+                chatsFragment fragment=(chatsFragment) manager.getFragments().get(0);
+                List<Indent> indentList=fragment.adapter.getIndents();
+                int i=0;
+                for (Indent indent:indentList){
+                    if (id.equals(indent.getId().toString())){
+                        indent.setFulfill(fulfill);
+                        indent.setReserve(reserve);
+                        indent.setReserveNumber(reserveNumber);
+                        indent.setFulfillNumber(fulfillNumber);
+                        indentList.add(i,indent);
+                        i=i+1;
+                        break;
+                    }
+                }
+                fragment.adapter.setIndents(indentList);
+                fragment.adapter.notifyDataSetChanged();
+            }
+        }
     }
     //进度对话框
     public ProgressDialog showWaitDialog(String message) {

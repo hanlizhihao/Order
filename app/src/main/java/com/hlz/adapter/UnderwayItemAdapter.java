@@ -103,6 +103,10 @@ public class UnderwayItemAdapter extends BaseAdapter {
     public List<UnderwayDetailsActivity.IndentMenu> getIndentMenus(){
         return indentMenus;
     }
+    public void setIndentMenus(List<UnderwayDetailsActivity.IndentMenu> indentMenus){
+        this.indentMenus=indentMenus;
+        notifyDataSetChanged();
+    }
 //    @Override
 //    public View getChildView(final int groupPosition, final int childPosition, boolean isLastchild, View view, ViewGroup viewGroup) {
 //        LinearLayout linearLayouts=new LinearLayout(context);

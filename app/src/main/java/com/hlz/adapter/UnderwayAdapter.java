@@ -1,26 +1,12 @@
 package com.hlz.adapter;
 
-import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.support.v7.widget.RecyclerView;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,26 +17,22 @@ import com.hanks.htextview.HTextViewType;
 import com.hlz.activity.MainActivity;
 import com.hlz.activity.UnderwayDetailsActivity;
 import com.hlz.entity.Indent;
-import com.hlz.entity.TestDinnerTable;
 import com.hlz.net.NetworkUtil;
+import com.hlz.order.MyApplication;
 import com.hlz.order.R;
-import com.hlz.util.TransformLongToString;
+import com.hlz.util.StringUtil;
 import com.tapadoo.alerter.Alerter;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 /**
  * Created by hlz on 2017/2/9
  */
 public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHolder> {
     private List<Indent> indents;//数据源
-    private FragmentActivity activity;
+    private MainActivity activity;
     private final String TAG="UnderwayAdapter";
-    public UnderwayAdapter(FragmentActivity activity,List<Indent> indents){
+    public UnderwayAdapter(MainActivity activity,List<Indent> indents){
         this.indents=indents;
         this.activity=activity;
     }
@@ -89,9 +71,9 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
         Long beginTime=indents.get(position).getBeginTime();
         Long firstTime=indents.get(position).getFirstTime();
         if (firstTime==null){
-            holder.waitTime.animateText(TransformLongToString.change(System.currentTimeMillis()-beginTime));
+            holder.waitTime.animateText(StringUtil.change(System.currentTimeMillis()-beginTime));
         }else{
-            holder.waitTime.animateText(TransformLongToString.change(firstTime-beginTime));
+            holder.waitTime.animateText(StringUtil.change(firstTime-beginTime));
         }
         holder.servingProgress.setText(indents.get(position).getReserveNumber()+"/"+indents.get(position).getReserveNumber());
         //为列表的每行元素设置点击启动activity
@@ -105,7 +87,9 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 intent.putExtra("fulFill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
                 intent.putExtra("reminderNumber",indent.getReminderNumber());
-                activity.startActivity(intent);
+                intent.putExtra("firstTime",indent.getFirstTime().toString());
+                intent.putExtra("price",indent.getPrice().toString());
+                activity.startActivityForResult(intent,0);//将会获取Activity返回的结果
             }
         });
         holder.details.setOnClickListener(new View.OnClickListener() {
@@ -118,14 +102,15 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 intent.putExtra("fulFill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
                 intent.putExtra("reminderNumber",indent.getReminderNumber());
-                activity.startActivity(intent);
+                activity.startActivityForResult(intent,0);//将会获取Activity返回的结果
             }
         });
-        final Response.Listener updateIndentListener=new Response.Listener<String>() {
+        final Response.Listener<String> updateIndentListener=new Response.Listener<String>() {
             @Override
             public void onResponse(String o) {
                 if ("success".equals(o)){
                     indents.get(position).setReminderNumber(indents.get(position).getReminderNumber()+1);
+                    Toast.makeText(MyApplication.getContext(),"催单成功",Toast.LENGTH_SHORT).show();
                     notifyDataSetChanged();
                 }else{
                     Alerter.create(activity)
@@ -135,11 +120,13 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                             .setDuration(2000)
                             .show();
                 }
+                activity.hideWaitDialog();
             }
         };
         final Response.ErrorListener errorListener=new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError volleyError) {
+                activity.hideWaitDialog();
                 Alerter.create(activity)
                         .setBackgroundColor(R.color.colorLightBlue)
                         .setTitle("催单失败！")
@@ -152,8 +139,10 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
         holder.reminder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                activity.showWaitDialog("正在催单...");
                 NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
-                networkUtil.updateIndent(updateIndentListener,errorListener,TAG);
+                //只发送id，由后台处理催单
+                networkUtil.reminder(indents.get(position).getId().toString(),updateIndentListener,errorListener,TAG);
             }
         });
     }

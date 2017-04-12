@@ -15,6 +15,9 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.hlz.entity.Indent;
 import com.hlz.entity.Menu;
 import com.hlz.order.MyApplication;
 import com.tapadoo.alerter.Alert;
@@ -53,7 +56,7 @@ public class NetworkUtil {
      * 网络请求的方法集
      */
     //loginActivity需要的方法
-    public void login(final String username, final String password, Response.Listener listener, Response.ErrorListener errorListener, String TAG){
+    public void login(final String username, final String password, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
         StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"login").getUrl(),listener,errorListener){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
@@ -63,28 +66,51 @@ public class NetworkUtil {
                 return map;
             }
         };
+        request.setTag(TAG);
         queue.add(request);
     }
     //空值为错，有值为正确返回的结果，函数将返回版本信息
-    public void getMenuVersion(Response.Listener listener,Response.ErrorListener errorListener, String TAG){
+    public void getMenuVersion(Response.Listener<String> listener,Response.ErrorListener errorListener, String TAG){
         StringRequest request=new StringRequest(Request.Method.GET, urlManager.findURL(context, "version").getUrl(),listener,errorListener);
+        request.setTag(TAG);
         queue.add(request);
     }
     //向服务器端请求菜单
-    public void getMenu(Response.Listener listener,Response.ErrorListener errorListener,String TAG){
+    public void getMenu(Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
         StringRequest request=new StringRequest(Request.Method.GET, urlManager.findURL(context, "menus").getUrl(),listener,errorListener);
+        request.setTag(TAG);
         queue.add(request);
     }
-    public void getUnderwayOrder(Response.Listener listener,Response.ErrorListener errorListener,String TAG){
+    public void getUnderwayOrder(Response.Listener<JSONArray> listener, Response.ErrorListener errorListener, String TAG){
         JsonArrayRequest request=new JsonArrayRequest(urlManager.findURL(context,"underway").getUrl(),listener,errorListener);
+        request.setTag(TAG);
         queue.add(request);
     }
-    public void updateIndent(Response.Listener listener,Response.ErrorListener errorListener,String TAG){
-        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"indent/update").getUrl(),listener,errorListener);
+    public void updateIndent(final Indent indent, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"indent/update").getUrl(),listener,errorListener){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("id", indent.getId().toString());
+                map.put("reserve",indent.getReserve());
+                map.put("fulfill", indent.getFulfill());
+                map.put("table", indent.getTableId());
+                map.put("reminderNumber", indent.getReminderNumber().toString());
+                map.put("price", indent.getPrice().toString());
+                map.put("time", indent.getFirstTime().toString());
+                return map;
+            }
+        };
+        request.setTag(TAG);
         queue.add(request);
     }
-    public void getSingleIndent(String id,Response.Listener listener,Response.ErrorListener errorListener,String TAG){
+    public void getSingleIndent(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
         StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"indent/id").getUrl()+id,listener,errorListener);
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void reminder(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"reminder").getUrl()+id,listener,errorListener);
         request.setTag(TAG);
         queue.add(request);
     }

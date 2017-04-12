@@ -40,7 +40,7 @@ import java.util.List;
 
 public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     String TAG="planFragment";
-    private UnderwayAdapter adapter;
+    public UnderwayAdapter adapter;
     ListView list;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View footView;
