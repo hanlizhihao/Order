@@ -11,7 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
-import com.hlz.activity.MakeOrder;
+import com.hlz.activity.MakeOrderActivity;
 import com.hlz.order.R;
 
 public class ContactsFragment extends Fragment
@@ -24,7 +24,7 @@ public class ContactsFragment extends Fragment
         makeorder.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent=new Intent(getActivity(), MakeOrder.class);
+                Intent intent=new Intent(getActivity(), MakeOrderActivity.class);
                 startActivity(intent);
             }
         });

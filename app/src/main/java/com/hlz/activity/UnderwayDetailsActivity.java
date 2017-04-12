@@ -21,7 +21,6 @@ import android.widget.Toast;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.hlz.adapter.UnderwayItemAdapter;
 import com.hlz.database.DatabaseUtil;
 import com.hlz.entity.Indent;
@@ -42,8 +41,6 @@ import java.util.Set;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
-
-import static com.hlz.util.StringUtil.fromListToString;
 
 /**
  * 正在进行订单的详情页，主要功能有：
@@ -116,7 +113,6 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_underway_details);
-
         showWaitDialog("正在努力加载数据...");
         ButterKnife.inject(this);
         //取出传递过来的数据，tableID,reserve,fulfill,reminderNumber,id
@@ -134,6 +130,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         manager.addActivity(this);
         //获取数据库中存储的菜单数据
         DatabaseUtil databaseUtil = new DatabaseUtil();
+        databaseUtil.DataBaseUtilInit(MyApplication.getContext());
         menus = databaseUtil.queryDatabase();
         setIndentMenus(indent);//设置数据源
         //初始化toolBar

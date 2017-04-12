@@ -27,7 +27,7 @@
         </activity>
         <activity android:name="com.hlz.activity.MainActivity" />
         <activity
-            android:name="com.hlz.activity.MakeOrder"
+            android:name="com.hlz.activity.MakeOrderActivity"
             android:windowSoftInputMode="stateHidden"> <!-- 防止自动弹出输入法 -->
         </activity>
         <activity android:name="com.hlz.activity.UnderwayDetailsActivity"/>

@@ -25,7 +25,6 @@ import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.DialogHelp;
 import com.hlz.util.DoubleClickExitHelper;
-import com.hlz.util.MonitoringTime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -212,7 +211,7 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         switch (id) {
             case R.id.add_new_order:
                 //UIHelper.showSimpleBack(this, SimpleBackPage.SEARCH);
-                Intent intent = new Intent(MainActivity.this,MakeOrder.class);
+                Intent intent = new Intent(MainActivity.this,MakeOrderActivity.class);
                 startActivity(intent);
                 break;
             default:

@@ -19,6 +19,7 @@ public class MyApplication extends Application{
     }
     @Override
     public void onCreate(){
+        super.onCreate();
         context=this;
         //初始化监视APP使用时间的类
         monitoringTime=new MonitoringTime(context);

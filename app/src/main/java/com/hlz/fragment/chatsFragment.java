@@ -12,7 +12,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
@@ -28,13 +26,11 @@ import com.hlz.activity.MainActivity;
 import com.hlz.adapter.UnderwayAdapter;
 import com.hlz.entity.Indent;
 import com.hlz.net.NetworkUtil;
-import com.hlz.order.LoginActivity;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.lqr.recyclerview.LQRRecyclerView;
 import com.tapadoo.alerter.Alerter;
 
-import java.security.PublicKey;
 import java.util.List;
 
 

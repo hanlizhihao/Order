@@ -24,7 +24,7 @@ import java.util.ArrayList;
  * Created by Hanlizhi on 2016/10/24.
  */
 
-public class addGreens  extends View implements ValueAnimator.AnimatorUpdateListener{
+public class AddGreensAnimator extends View implements ValueAnimator.AnimatorUpdateListener{
     private ImageButton start;
     private int tox;
     private int toy;
@@ -39,7 +39,7 @@ public class addGreens  extends View implements ValueAnimator.AnimatorUpdateList
     public final ArrayList<ShapeHolder> balls
             = new ArrayList<>();
 
-    public addGreens(Context context) {
+    public AddGreensAnimator(Context context) {
         super(context);
     }
 
@@ -131,7 +131,8 @@ public class addGreens  extends View implements ValueAnimator.AnimatorUpdateList
         int green = (int) (Math.random() * 255);
         int blue = (int) (Math.random() * 255);
         // 将red、green、blue三个随机数组合成ARGB颜色
-        int color = 0xff000000 + red << 16 | green << 8 | blue;
+//        int color = 0xff000000 + red << 16 | green << 8 | blue;
+        int color=0xfffe864b;
         // 获取drawable上关联的画笔
         Paint paint = drawable.getPaint();
         // 将red、green、blue三个随机数除以4得到商值组合成ARGB颜色

@@ -18,7 +18,7 @@ import android.widget.EditText;
 
 import com.hlz.order.R;
 
-public class ClearEditText extends EditText implements
+public class ClearEditText extends android.support.v7.widget.AppCompatEditText implements
         OnFocusChangeListener, TextWatcher {
     /**
      * 删除按钮的引用

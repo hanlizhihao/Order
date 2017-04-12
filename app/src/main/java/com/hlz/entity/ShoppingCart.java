@@ -48,7 +48,7 @@ public class ShoppingCart {
     public void setOrder_size(Integer order_size) {
         this.order_size = order_size;
     }
-    public void renewPrice(double arg){//用于更新菜单的总价
+    private void renewPrice(double arg){//用于更新菜单的总价
         Double sum=getPrice()+arg;
         setPrice(sum);
     }
@@ -63,7 +63,7 @@ public class ShoppingCart {
             }
         }
     }
-    public Boolean addSingleSize(String name){//用于添加菜名对应的数量
+    public boolean addSingleSize(String name){//用于添加菜名对应的数量
         try{
             if (order_book.get(name)==null){
                 order_book.put(name,1);
@@ -83,7 +83,7 @@ public class ShoppingCart {
             return false;
         }
     }
-    public Boolean deleteSingleSize(String name){
+    public boolean deleteSingleSize(String name){
         try {
             if (order_book.get(name)==null){
                 return false;
@@ -107,5 +107,8 @@ public class ShoppingCart {
 
     public void setOrder(Map<String, Double> order) {
         this.order = order;
+    }
+    public boolean isEmpty(){
+        return order.isEmpty();
     }
 }

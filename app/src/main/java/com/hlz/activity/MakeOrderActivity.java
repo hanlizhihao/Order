@@ -1,37 +1,42 @@
 package com.hlz.activity;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlz.adapter.SortAdapter;
+import com.hlz.database.DatabaseUtil;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.CharacterParser;
 import com.hlz.util.ClearEditText;
+import com.hlz.util.DialogHelp;
 import com.hlz.util.PinyinComparator;
 import com.hlz.util.SideBar;
-import com.hlz.adapter.SortAdapter;
 import com.hlz.util.SortModel;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
-public class MakeOrder extends AppCompatActivity {
-    /**
-     * 必要变量
-     */
+public class MakeOrderActivity extends AppCompatActivity {
+    public final String TAG="MakeOrderActivity";
+    private boolean _isVisible = true;
+    private ProgressDialog _waitDialog;
     private RelativeLayout realative;
     private ListView sortListView;
     private SideBar sideBar;
@@ -40,6 +45,7 @@ public class MakeOrder extends AppCompatActivity {
     private ClearEditText mClearEditText;
     private TextView sumSize;//点菜总数
     private TextView sumPrice;//总钱数
+    ImageButton order_cart;
     /**
      * 汉字转换成拼音的类
      */
@@ -54,6 +60,7 @@ public class MakeOrder extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_order);
+
         realative=(RelativeLayout)findViewById(R.id.cart);
         initViews();
         AppManager.getAppManager().addActivity(this);
@@ -65,7 +72,6 @@ public class MakeOrder extends AppCompatActivity {
         sideBar = (SideBar) findViewById(R.id.sidrbar);
         dialog = (TextView) findViewById(R.id.dialog);
         sideBar.setTextView(dialog);
-
         //设置右侧触摸监听
         sideBar.setOnTouchingLetterChangedListener(new SideBar.OnTouchingLetterChangedListener() {
 
@@ -80,22 +86,26 @@ public class MakeOrder extends AppCompatActivity {
         });
 
         sortListView = (ListView)findViewById(R.id.country_lvcountry);
-        sortListView.setOnItemClickListener(new OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view,
-                                    int position, long id) {
-                //这里要利用adapter.getItem(position)来获取当前position所对应的对象
-                ((SortModel)adapter.getItem(position)).getName();
-                //Toast.makeText(getActivity(), ((SortModel)adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
-            }
-        });
+//        sortListView.setOnItemClickListener(new OnItemClickListener() {
+//
+//            @Override
+//            public void onItemClick(AdapterView<?> parent, View view,
+//                                    int position, long id) {
+//                //这里要利用adapter.getItem(position)来获取当前position所对应的对象
+//                adapter.getItem(position).getName();
+//                //Toast.makeText(getActivity(), ((SortModel)adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
         /**
          * 这个函数接受一个数组作为数据源
          * 菜单应该是Map类型，在这里获取Map类型的key集合，并转化为数组形式
          * 因为是点菜宝，因此不设定显示价格，只在购物车附近显示总价格与菜品数量
          */
-        SourceDateList = filledData(getResources().getStringArray(R.array.datetest));
+        DatabaseUtil databaseUtil=new DatabaseUtil();
+        Map<String,Double> menu=databaseUtil.queryDatabase();
+        TreeSet<String> menuTreeSet= (TreeSet<String>) menu.keySet();
+        String[] menusArray= (String[]) menuTreeSet.toArray();
+        SourceDateList = filledData(menusArray);
         // 根据a-z进行排序源数据
         Collections.sort(SourceDateList, pinyinComparator);
         /**
@@ -103,8 +113,8 @@ public class MakeOrder extends AppCompatActivity {
          */
         sumSize=(TextView)findViewById(R.id.sumSize);
         sumPrice=(TextView)findViewById(R.id.sumPrice);
-        ImageView order_cart = (ImageView) findViewById(R.id.order_cart);
-        adapter = new SortAdapter(MakeOrder.this, SourceDateList, order_cart,realative,sumSize,sumPrice);
+        order_cart = (ImageButton) findViewById(R.id.order_cart);
+        adapter = new SortAdapter(MyApplication.getContext(), SourceDateList, order_cart,realative,sumSize,sumPrice);
         sortListView.setAdapter(adapter);
         mClearEditText = (ClearEditText)findViewById(R.id.filter_edit);
         //根据输入框输入值的改变来过滤搜索
@@ -158,7 +168,6 @@ public class MakeOrder extends AppCompatActivity {
      */
     private void filterData(String filterStr){
         List<SortModel> filterDateList = new ArrayList<>();
-
         if(TextUtils.isEmpty(filterStr)){
             filterDateList = SourceDateList;
         }else{
@@ -184,5 +193,30 @@ public class MakeOrder extends AppCompatActivity {
     public void onStop(){
         super.onStop();
         MyApplication.getMonitoringTime().end();
+    }
+    //进度对话框
+    public ProgressDialog showWaitDialog(String message) {
+        if (_isVisible) {
+            if (_waitDialog == null) {
+                _waitDialog = DialogHelp.getWaitDialog(this, message);
+            }
+            if (_waitDialog != null) {
+                _waitDialog.setMessage(message);
+                _waitDialog.show();
+            }
+            return _waitDialog;
+        }
+        return null;
+    }
+
+    public void hideWaitDialog() {
+        if (_isVisible && _waitDialog != null) {
+            try {
+                _waitDialog.dismiss();
+                _waitDialog = null;
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
     }
 }

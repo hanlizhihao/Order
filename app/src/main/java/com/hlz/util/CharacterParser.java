@@ -1,12 +1,8 @@
 package com.hlz.util;
 
 /**
- * Created by Hanlizhi on 2016/10/16.
- */
-
-/**
  * Java汉字转换为拼音
- *
+ * Created by Hanlizhi on 2016/10/16.
  */
 public class CharacterParser {
     private static int[] pyvalue = new int[] {-20319, -20317, -20304, -20295, -20292, -20283, -20265, -20257, -20242, -20230, -20051, -20036, -20032,

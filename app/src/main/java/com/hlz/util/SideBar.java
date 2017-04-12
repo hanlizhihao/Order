@@ -1,6 +1,7 @@
 package com.hlz.util;
 
 /**
+ * 自定义侧边栏
  * Created by Hanlizhi on 2016/10/9.
  */
 
@@ -125,7 +126,6 @@ public class SideBar extends View {
             OnTouchingLetterChangedListener onTouchingLetterChangedListener) {
         this.onTouchingLetterChangedListener = onTouchingLetterChangedListener;
     }
-
     /**
      * 接口
      *
@@ -133,7 +133,6 @@ public class SideBar extends View {
      *
      */
     public interface OnTouchingLetterChangedListener {
-        public void onTouchingLetterChanged(String s);
+        void onTouchingLetterChanged(String s);
     }
-
 }
