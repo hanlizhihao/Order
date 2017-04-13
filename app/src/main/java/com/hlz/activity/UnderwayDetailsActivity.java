@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -121,10 +122,10 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         indent.setReserve(intent.getStringExtra("reserve"));
         indent.setFulfill(intent.getStringExtra("fulfill"));
         indent.setTableId(intent.getStringExtra("tableID"));
-        indent.setId(Integer.valueOf(intent.getStringExtra("id")));
-        indent.setReminderNumber(Integer.valueOf(intent.getStringExtra("reminderNumber")));
-        indent.setFirstTime(Long.valueOf(intent.getStringExtra("firstTime")));
-        indent.setPrice(Double.valueOf(intent.getStringExtra("price")));
+        indent.setId(intent.getIntExtra("id",0));
+        indent.setReminderNumber(intent.getIntExtra("reminderNumber",0));
+        indent.setFirstTime(intent.getLongExtra("firstTime",0));
+        indent.setPrice(intent.getDoubleExtra("price",0));
         //堆栈式管理
         manager = AppManager.getAppManager();
         manager.addActivity(this);
@@ -248,7 +249,12 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 builder.setNegativeButton("确定", dialog);
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
-            }
+            }else{
+            Intent intent=new Intent();
+            intent.putExtra("reserveChanged","");
+            UnderwayDetailsActivity.this.setResult(0,intent);
+            manager.finishActivity();
+        }
         return true;
     }
 
@@ -281,6 +287,9 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         toolbar.setTitle("桌号：" + indent.getTableId());
         toolbar.setSubtitle("催单次数：" + indent.getReminderNumber());
         setSupportActionBar(toolbar);
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);//决定是否可点击
     }
 
     @Override
@@ -318,7 +327,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             }
         } else {
             String[] reserves = reserve.split("e");
-            for (int i = 0; i < reserve.length(); i++) {
+            for (int i = 0; i < reserves.length; i++) {
                 String[] singleMenuReserve = reserves[i].split("a");
                 IndentMenu indentMenu = new IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
@@ -375,15 +384,14 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             }
         }
     }
-    //设备运行时间计时
     @Override
     public void onResume(){
-        super.onResume();
         MyApplication.getMonitoringTime().start();
+        super.onResume();
     }
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onPause(){
         MyApplication.getMonitoringTime().end();
+        super.onPause();
     }
 }

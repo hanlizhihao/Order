@@ -4,16 +4,17 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+
 import com.hlz.animationlibrary.CubeOutTransformer;
 import com.hlz.entity.Indent;
 import com.hlz.fragment.ContactsFragment;
@@ -29,7 +30,7 @@ import com.hlz.util.DoubleClickExitHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends FragmentActivity implements RadioGroup.OnCheckedChangeListener
+public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener
 {
     private boolean _isVisible=true;
     private ProgressDialog _waitDialog;
@@ -45,15 +46,16 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     private DoubleClickExitHelper mDoubleClickExit;
     private AppManager appManager;
     private Toolbar toolbar;
+    //设备运行时间计时
     @Override
     public void onResume(){
-        super.onResume();
         MyApplication.getMonitoringTime().start();
+        super.onResume();
     }
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onPause(){
         MyApplication.getMonitoringTime().end();
+        super.onPause();
     }
     @SuppressWarnings("deprecation")
     @Override
@@ -61,7 +63,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
     {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
         //界面初始函数，用来获取定义的各控件对应的ID
         InitView();
         //ViewPager初始化函数
@@ -69,6 +70,8 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         mDoubleClickExit = new DoubleClickExitHelper(this);//双击退出
         appManager=AppManager.getAppManager();
         appManager.addActivity(this);
+        toolbar=(Toolbar)findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
     }
     public void InitView()
     {
@@ -78,7 +81,6 @@ public class MainActivity extends FragmentActivity implements RadioGroup.OnCheck
         radio_contacts = (RadioButton) findViewById(R.id.radio_contacts) ;
         radio_discover = (RadioButton) findViewById(R.id.radio_discover) ;
         radio_me = (RadioButton) findViewById(R.id.radio_me) ;
-
         main_tab_RadioGroup.setOnCheckedChangeListener(this);
     }
 

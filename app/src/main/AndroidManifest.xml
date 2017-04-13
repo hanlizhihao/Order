@@ -21,7 +21,6 @@
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -30,7 +29,11 @@
             android:name="com.hlz.activity.MakeOrderActivity"
             android:windowSoftInputMode="stateHidden"> <!-- 防止自动弹出输入法 -->
         </activity>
-        <activity android:name="com.hlz.activity.UnderwayDetailsActivity"/>
+        <activity android:name="com.hlz.activity.UnderwayDetailsActivity" />
+        <service
+            android:name=".RabbitMQService"
+            android:enabled="true"
+            android:exported="true"/>
     </application>
 
 </manifest>

@@ -108,14 +108,11 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 /**
                  * 动画，向购物车添加菜品，更新设置购物车图标及其附近的总价总数在这里！
                  */
+                orderCart.setBackgroundResource(R.mipmap.cart_pressed);
                 AddGreensAnimator anim=new AddGreensAnimator(mContext);
                 anim.init((ImageButton) v,orderCart);
                 relativeLayout.addView(anim);
                 anim.initView();
-                if (shoppingCart.isEmpty()) {
-                    //更改购物车图标
-                    orderCart.setBackgroundResource(R.mipmap.cart_pressed);
-                }
                 finalViewHolder.deleteOrder.setVisibility(View.VISIBLE); //设置删除图标显示
                 //接下来添加菜品
                 boolean result=shoppingCart.addSingleSize(getItem(position).getName());
@@ -149,12 +146,10 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 }else{
                     if (singleSize==1){
                         finalViewHolder.deleteOrder.setVisibility(View.GONE);
-                        shoppingCart.deleteSingleSize(getItem(position).getName());
+                        boolean result=shoppingCart.deleteSingleSize(getItem(position).getName());
                         if (shoppingCart.isEmpty()){
                             orderCart.setBackgroundResource(R.mipmap.cart);
                         }
-                        //接下来删除购物车里的菜品
-                        boolean result=shoppingCart.deleteSingleSize(getItem(position).getName());
                         if (result){
                             String sumNumber=mContext.getResources().getString(R.string.sumSize)+
                                     shoppingCart.getOrder_size().toString();
@@ -179,7 +174,7 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                             String sumPriceNumber=mContext.getResources().getString(R.string.sumPrice)
                                     +Double.toString(Math.round(shoppingCart.getPrice()*100)/100.0)+"元";
                             sumPrice.setText(sumPriceNumber);
-                            finalViewHolder.singleOrderNumber.setText(shoppingCart.findSingleSize(getItem(position).getName()));
+                            finalViewHolder.singleOrderNumber.setText(shoppingCart.findSingleSize(getItem(position).getName()).toString());
                             Log.d("TAG","删除成功");
                         }else
                         {

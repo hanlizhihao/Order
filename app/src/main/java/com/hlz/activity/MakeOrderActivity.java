@@ -36,6 +36,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.TreeSet;
 
 public class MakeOrderActivity extends AppCompatActivity {
@@ -99,9 +101,15 @@ public class MakeOrderActivity extends AppCompatActivity {
          * 因为是点菜宝，因此不设定显示价格，只在购物车附近显示总价格与菜品数量
          */
         DatabaseUtil databaseUtil=new DatabaseUtil();
+        databaseUtil.DataBaseUtilInit(MyApplication.getContext());
         Map<String,Double> menu=databaseUtil.queryDatabase();
-        TreeSet<String> menuTreeSet= (TreeSet<String>) menu.keySet();
-        String[] menusArray= (String[]) menuTreeSet.toArray();
+        Set<String> menuSet= menu.keySet();
+        String[] menusArray = new String[menuSet.size()];
+        int i=0;
+        for (Object o:menuSet.toArray()){
+            menusArray[i]=o.toString();
+            i++;
+        }
         SourceDateList = filledData(menusArray);
         // 根据a-z进行排序源数据
         Collections.sort(SourceDateList, pinyinComparator);
@@ -208,13 +216,13 @@ public class MakeOrderActivity extends AppCompatActivity {
     }
     @Override
     public void onResume(){
-        super.onResume();
         MyApplication.getMonitoringTime().start();
+        super.onResume();
     }
     @Override
-    public void onStop(){
-        super.onStop();
+    public void onPause(){
         MyApplication.getMonitoringTime().end();
+        super.onPause();
     }
     //进度对话框
     public ProgressDialog showWaitDialog(String message) {

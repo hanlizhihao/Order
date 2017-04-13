@@ -3,6 +3,7 @@ package com.hlz.fragment;
  * 显示进度的Fragment
  * Created by hlz on 2016/9/8.
  */
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -12,7 +13,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -20,7 +20,6 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.reflect.TypeToken;
 import com.hlz.activity.MainActivity;
 import com.hlz.adapter.UnderwayAdapter;
@@ -28,6 +27,7 @@ import com.hlz.entity.Indent;
 import com.hlz.net.NetworkUtil;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
+import com.hlz.order.RabbitMQService;
 import com.lqr.recyclerview.LQRRecyclerView;
 import com.tapadoo.alerter.Alerter;
 
@@ -37,7 +37,6 @@ import java.util.List;
 public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     String TAG="planFragment";
     public UnderwayAdapter adapter;
-    ListView list;
     SwipeRefreshLayout mSwipeRefreshLayout;
     private View footView;
     private RelativeLayout loading;
@@ -47,16 +46,28 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     private int lastItem;
     private List<Indent> indents;//网络请求的Indent数据集
     private MainActivity mainActivity;
+    private Handler handlerService;
+    private Handler handlerAdapter;
     private void initView(View v){
+        mainActivity=(MainActivity) getActivity();
+        mainActivity.showWaitDialog("正在获取订单信息");
         mSwipeRefreshLayout=(SwipeRefreshLayout)v.findViewById(R.id.swipe_refresh_layout);
         footView = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.item_footer, null);
         loading = (RelativeLayout) footView.findViewById(R.id.xlistview_footer_content);
         footerProgressbar = (ProgressBar) footView.findViewById(R.id.foot_progressbar);
         footerTextview = (TextView) footView.findViewById(R.id.foot_text);
         planList=(LQRRecyclerView)v.findViewById(R.id.plan_list);
-        mainActivity=(MainActivity) getActivity();
         initUnderwayData();
-        mainActivity.showWaitDialog("正在获取订单信息");
+        handlerService=new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if (message.what==1){
+                    onRefresh();
+                }
+            }
+        };
+        Intent intent=new Intent(mainActivity, RabbitMQService.class);
+        mainActivity.startService(intent);
     }
     public void initUnderwayData(){
         NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
@@ -81,26 +92,22 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
-        adapter = new UnderwayAdapter(mainActivity,indents);
-        planList.setAdapter(adapter);
         //持续的改变等待时间
-        new Thread(new Runnable() {
+        handlerAdapter=new Handler(){
             @Override
-            public void run() {
-                adapter.notifyDataSetChanged();
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
+            public void handleMessage(Message message){
+                if (message.what==1){
+                    adapter = new UnderwayAdapter(mainActivity,indents);
+                    planList.setAdapter(adapter);
                 }
             }
-        }).start();
+        };
         return v;
     }
     protected void loadData() {
         footerProgressbar.setVisibility(View.VISIBLE);
         footerTextview.setText("加载中");
-        handler.postDelayed(new Runnable() {
+        handlerRefresh.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //如果数据很多，为了不一次性全部显示出来，所以Adapeter要这样设计一个函数，
@@ -131,7 +138,7 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             mSwipeRefreshLayout.setEnabled(true);
         }
     }
-    Handler handler = new Handler() {
+    Handler handlerRefresh = new Handler() {
         @Override
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
@@ -155,14 +162,15 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void onDestroyView() {
         super.onDestroyView();
     }
-    public Response.Listener getUnderwayDataListener=new Response.Listener<JsonArray>() {
+    public Response.Listener getUnderwayDataListener=new Response.Listener<String>() {
         @Override
-        public void onResponse(JsonArray o) {
-            if (o!=null&&!o.isJsonNull()&&o.isJsonArray()){
+        public void onResponse(String o) {
+            if (o!=null&&!o.equals("")){
                 Gson gson=new Gson();
                 indents=gson.fromJson(o,new TypeToken<List<Indent>>(){}.getType());
                 mainActivity.hideWaitDialog();
-                handler.sendEmptyMessage(1);
+                handlerRefresh.sendEmptyMessage(1);
+                handlerAdapter.sendEmptyMessage(1);
             }
         }
     };

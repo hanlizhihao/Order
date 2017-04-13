@@ -68,8 +68,8 @@ public class NetworkUtil {
         request.setTag(TAG);
         queue.add(request);
     }
-    public void getUnderwayOrder(Response.Listener<JSONArray> listener, Response.ErrorListener errorListener, String TAG){
-        JsonArrayRequest request=new JsonArrayRequest(urlManager.findURL(context,"underway").getUrl(),listener,errorListener);
+    public void getUnderwayOrder(Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"underway").getUrl(),listener,errorListener);
         request.setTag(TAG);
         queue.add(request);
     }

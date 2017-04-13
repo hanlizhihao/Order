@@ -9,6 +9,12 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
+    <style name="AppTheme.ActionBar" parent="Base.Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/best_head_bg</item>
+        <item name="colorPrimaryDark">@color/best_head_bg</item>
+        <item name="colorAccent">@color/best_head_bg</item>
+    </style>
     <style name="AppTheme.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
@@ -18,7 +24,7 @@
         <item name="android:actionBarStyle">@style/DarkActionBar</item>
     </style>
     <style name="DarkActionBar" parent="@android:style/Widget.Holo.ActionBar">
-        <item name="android:background">@android:color/background_dark</item>
+        <item name="android:background">@color/best_head_bg</item>
     </style>
     <style name="main_tab">
         <item name="android:textColor">@drawable/tab_textcolor</item>

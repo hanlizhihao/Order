@@ -3,29 +3,30 @@
     <Node Key="login"
         Expires="0"
         NetType="post"
-        Url="http://192.168.1.100:8080/app/login"/>
+        Url="http://192.168.1.113:8080/app/login"/>
     <Node Key="version"
         Expires="1000"
         NetType="get"
-        Url="http://192.168.1.100:8080/version"/>
+        Url="http://192.168.1.113:8080/version"/>
+    <!--10.10.64.153-->
     <Node Key="menus"
         Expires="2000"
         NetType="get"
-        Url="http://192.168.1.100:8080/menus"/>
+        Url="http://192.168.1.113:8080/menus"/>
     <Node Key="underway"
         Expires="2000"
         NetType="get"
-        Url="http://192.168.1.100:8080/underway"/>
+        Url="http://192.168.1.113:8080/underway"/>
     <Node Key="indent/update"
         Expires="0"
         NetType="post"
-        Url="http://192.168.1.100:8080/indent/update"/>
+        Url="http://192.168.1.113:8080/indent/update/app"/>
     <Node Key="indent/id"
         Expires="0"
         NetType="get"
-        Url="http://192.168.1.100:8080/indent/"/>
+        Url="http://192.168.1.113:8080/indent/"/>
     <Node Key="reminder"
         Expires="0"
         NetType="get"
-        Url="http://192.168.1.100:8080/reminder/"/>
+        Url="http://192.168.1.113:8080/reminder/"/>
 </url>
