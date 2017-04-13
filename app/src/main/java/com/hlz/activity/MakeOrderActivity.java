@@ -6,15 +6,19 @@ import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.hlz.adapter.ShoppingCartAdapter;
 import com.hlz.adapter.SortAdapter;
 import com.hlz.database.DatabaseUtil;
 import com.hlz.order.MyApplication;
@@ -26,6 +30,7 @@ import com.hlz.util.DialogHelp;
 import com.hlz.util.PinyinComparator;
 import com.hlz.util.SideBar;
 import com.hlz.util.SortModel;
+import com.lqr.recyclerview.LQRRecyclerView;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +51,8 @@ public class MakeOrderActivity extends AppCompatActivity {
     private TextView sumSize;//点菜总数
     private TextView sumPrice;//总钱数
     ImageButton order_cart;
+    private LQRRecyclerView shoppingCartListView;
+    private TextView shoppingCartClear;
     /**
      * 汉字转换成拼音的类
      */
@@ -60,10 +67,11 @@ public class MakeOrderActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_order);
-
+        showWaitDialog("初始化...");
         realative=(RelativeLayout)findViewById(R.id.cart);
         initViews();
         AppManager.getAppManager().addActivity(this);
+        hideWaitDialog();
     }
     private void initViews() {
         //实例化汉字转拼音类
@@ -84,18 +92,7 @@ public class MakeOrderActivity extends AppCompatActivity {
                 }
             }
         });
-
         sortListView = (ListView)findViewById(R.id.country_lvcountry);
-//        sortListView.setOnItemClickListener(new OnItemClickListener() {
-//
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view,
-//                                    int position, long id) {
-//                //这里要利用adapter.getItem(position)来获取当前position所对应的对象
-//                adapter.getItem(position).getName();
-//                //Toast.makeText(getActivity(), ((SortModel)adapter.getItem(position)).getName(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
         /**
          * 这个函数接受一个数组作为数据源
          * 菜单应该是Map类型，在这里获取Map类型的key集合，并转化为数组形式
@@ -133,8 +130,33 @@ public class MakeOrderActivity extends AppCompatActivity {
             public void afterTextChanged(Editable s) {
             }
         });
+        //加载弹窗视图布局
+        View view= LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.shopping_cart,null);
+        shoppingCartClear=(TextView) view.findViewById(R.id.clear);
+        shoppingCartListView=(LQRRecyclerView)view.findViewById(R.id.shopping_cart_list);
+        final ShoppingCartAdapter shoppingAdapter=new ShoppingCartAdapter(adapter.getShoppingCart(),MyApplication.getContext());
+        shoppingCartListView.setAdapter(shoppingAdapter);
+        shoppingCartClear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                adapter.getShoppingCart().clearShoppingCart();
+                shoppingAdapter.getData().clear();
+                shoppingAdapter.notifyDataSetChanged();
+            }
+        });
+        //创建PopupWindow
+        final PopupWindow popup=new PopupWindow(view);
+        order_cart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (popup.isShowing()){
+                    popup.dismiss();
+                }else{
+                    popup.showAtLocation(findViewById(R.id.cart_view), Gravity.CENTER,20,20);
+                }
+            }
+        });
     }
-
     /**
      * 为ListView填充数据
      * @param date 填充数组

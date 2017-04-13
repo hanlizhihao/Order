@@ -4,7 +4,10 @@ import android.content.Context;
 
 import com.hlz.database.DatabaseUtil;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 /**
@@ -88,6 +91,12 @@ public class ShoppingCart {
             if (order_book.get(name)==null){
                 return false;
             }else{
+                if (order_book.get(name)==1){
+                    order_book.remove(name);
+                    renewPrice(-order.get(name));
+                    order_size=order_size-1;
+                    return true;
+                }
                 int value=order_book.get(name);
                 value=value-1;
                 order_book.put(name,value);
@@ -110,5 +119,21 @@ public class ShoppingCart {
     }
     public boolean isEmpty(){
         return order.isEmpty();
+    }
+    public List<ItemShoppingCart> getItemShoppingCart(){
+        List<ItemShoppingCart> result=new ArrayList<>();
+        for (Map.Entry<String,Integer> itemOrder:order_book.entrySet()){
+            ItemShoppingCart item=new ItemShoppingCart();
+            item.setName(itemOrder.getKey());
+            item.setNumber(itemOrder.getValue().toString());
+            item.setPrice(order.get(itemOrder.getKey())*itemOrder.getValue());
+            result.add(item);
+        }
+        return result;
+    }
+    public void clearShoppingCart(){
+        order_book.clear();
+        order_size=0;
+        price=0.0;
     }
 }

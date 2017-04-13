@@ -59,7 +59,7 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
     }
     @Override
     public UnderwayAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View normal_views = LayoutInflater.from(parent.getContext()).inflate(
+        View normal_views = LayoutInflater.from(MyApplication.getContext()).inflate(
                 R.layout.fragment_item_underway, parent, false);
         return new ViewHolder(normal_views);
     }
