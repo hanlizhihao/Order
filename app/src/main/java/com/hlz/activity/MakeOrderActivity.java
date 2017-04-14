@@ -1,16 +1,23 @@
 package com.hlz.activity;
 
 import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -21,6 +28,7 @@ import android.widget.TextView;
 import com.hlz.adapter.ShoppingCartAdapter;
 import com.hlz.adapter.SortAdapter;
 import com.hlz.database.DatabaseUtil;
+import com.hlz.entity.ShoppingCart;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
@@ -54,7 +62,9 @@ public class MakeOrderActivity extends AppCompatActivity {
     private TextView sumPrice;//总钱数
     ImageButton order_cart;
     private LQRRecyclerView shoppingCartListView;
-    private TextView shoppingCartClear;
+    private Button shoppingCartClear;
+    private ShoppingCartAdapter shoppingCartAdapter;
+    private ShoppingCart shoppingCart;
     /**
      * 汉字转换成拼音的类
      */
@@ -119,7 +129,8 @@ public class MakeOrderActivity extends AppCompatActivity {
         sumSize=(TextView)findViewById(R.id.sumSize);
         sumPrice=(TextView)findViewById(R.id.sumPrice);
         order_cart = (ImageButton) findViewById(R.id.order_cart);
-        adapter = new SortAdapter(MyApplication.getContext(), SourceDateList, order_cart,realative,sumSize,sumPrice);
+        shoppingCart=new ShoppingCart(MyApplication.getContext());
+        adapter = new SortAdapter(MyApplication.getContext(), SourceDateList, order_cart,realative,sumSize,sumPrice,shoppingCart);
         sortListView.setAdapter(adapter);
         mClearEditText = (ClearEditText)findViewById(R.id.filter_edit);
         //根据输入框输入值的改变来过滤搜索
@@ -140,30 +151,59 @@ public class MakeOrderActivity extends AppCompatActivity {
         });
         //加载弹窗视图布局
         View view= LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.shopping_cart,null);
-        shoppingCartClear=(TextView) view.findViewById(R.id.clear);
+        shoppingCartClear=(Button) view.findViewById(R.id.clear);
         shoppingCartListView=(LQRRecyclerView)view.findViewById(R.id.shopping_cart_list);
-        final ShoppingCartAdapter shoppingAdapter=new ShoppingCartAdapter(adapter.getShoppingCart(),MyApplication.getContext());
-        shoppingCartListView.setAdapter(shoppingAdapter);
-        shoppingCartClear.setOnClickListener(new View.OnClickListener() {
+        //创建PopupWindow
+        final PopupWindow finalPopup=new PopupWindow(this);
+        finalPopup.setContentView(view);
+        finalPopup.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
+        finalPopup.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        finalPopup.setTouchable(true);
+        finalPopup.setOutsideTouchable(false);
+        finalPopup.setBackgroundDrawable(new ColorDrawable(0x000000));
+        finalPopup.getContentView().setFocusableInTouchMode(true);
+        finalPopup.getContentView().setFocusable(true);
+        finalPopup.setAnimationStyle(R.style.anim_menu_bottombar);
+        finalPopup.getContentView().setOnKeyListener(new View.OnKeyListener() {
             @Override
-            public void onClick(View view) {
-                adapter.getShoppingCart().clearShoppingCart();
-                shoppingAdapter.getData().clear();
-                shoppingAdapter.notifyDataSetChanged();
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if (keyCode == KeyEvent.KEYCODE_MENU && event.getRepeatCount() == 0
+                        && event.getAction() == KeyEvent.ACTION_DOWN) {
+                    if (finalPopup != null && finalPopup.isShowing()) {
+                        finalPopup.dismiss();
+                    }
+                    return true;
+                }
+                return false;
             }
         });
-        //创建PopupWindow
-        final PopupWindow popup=new PopupWindow(view);
         order_cart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (popup.isShowing()){
-                    popup.dismiss();
+                if (finalPopup.isShowing()){
+                    adapter = new SortAdapter(MyApplication.getContext(), SourceDateList, order_cart,realative,sumSize,sumPrice,shoppingCart);
+                    sortListView.setAdapter(adapter);
+                    Log.d(TAG,"update函数已经执行");
+                    finalPopup.dismiss();
                 }else{
-                    popup.showAtLocation(findViewById(R.id.cart_view), Gravity.CENTER,20,20);
+                    shoppingCartAdapter=new ShoppingCartAdapter(shoppingCart,MyApplication.getContext(),sumSize,sumPrice);
+                    shoppingCartListView.setAdapter(shoppingCartAdapter);
+                    shoppingCartClear.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            shoppingCart.clearShoppingCart();
+                            changeShoppingCartAdapter();
+                        }
+                    });
+                    finalPopup.showAtLocation(findViewById(R.id.cart_view), Gravity.CENTER, 0, 0);
                 }
             }
         });
+    }
+    //用于更新shoppingCart
+    private void changeShoppingCartAdapter(){
+        shoppingCartAdapter.getData().clear();
+        shoppingCartAdapter.notifyDataSetChanged();
     }
     /**
      * 为ListView填充数据

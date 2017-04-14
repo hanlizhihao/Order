@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/white">
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="40sp"
@@ -20,13 +21,14 @@
             android:textColor="@color/color_dialog_ok"
             android:layout_toRightOf="@id/space"
             android:text="已经选择的菜品"/>
-        <TextView
+        <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:textColor="@color/base_red"
             android:layout_toLeftOf="@+id/right_space"
             android:id="@+id/clear"
+            android:background="@color/iron"
             android:text="清空"/>
         <Space
             android:layout_width="20sp"

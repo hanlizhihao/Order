@@ -66,7 +66,7 @@
     <color name="base">#AAAAAA</color>
     <color name="iron">#CCCCCC</color>
     <color name="yellow">#ffffff00</color>
-    <color name="green">#ff00ff00</color>
+    <color name="green">#09a409</color>
     <color name="transparent">#00000000</color>
     <color name="default_progress_bar_color">#ff33b5e5</color>
     <color name="base_bg_color">#ffffffff</color>

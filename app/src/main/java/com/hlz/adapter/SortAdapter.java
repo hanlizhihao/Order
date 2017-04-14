@@ -36,12 +36,12 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
      * 逻辑是如果点一次plus则对这个值加1，当点minus则对这个值减1，如果减一之后为0，再更改购物车的图标
      */
     public SortAdapter(Context mContext, List<SortModel> list, ImageButton imageView, RelativeLayout relativeLayout
-    ,TextView sumSize,TextView sumPrice) {
+    ,TextView sumSize,TextView sumPrice,ShoppingCart shoppingCart) {
         this.mContext = mContext;
         this.list = list;
         this.orderCart=imageView;
         this.relativeLayout=relativeLayout;
-        this.shoppingCart=new ShoppingCart(mContext);
+        this.shoppingCart=shoppingCart;
         this.sumSize=sumSize;
         this.sumPrice=sumPrice;
     }
@@ -100,7 +100,12 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
          * 表示这行的菜品Name
          */
         viewHolder.tvTitle.setText(getItem(position).getName());
-        final String order_name=this.list.get(position).getName();
+        Integer single_size=shoppingCart.findSingleSize(list.get(position).getName());
+        if (single_size!=null&&0!=single_size){
+            viewHolder.deleteOrder.setVisibility(View.VISIBLE);
+            viewHolder.singleOrderNumber.setText(single_size.toString());
+        }
+        final String order_name=list.get(position).getName();
         final ViewHolder finalViewHolder = viewHolder;
         viewHolder.makeOrder.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,10 +151,8 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 }else{
                     if (singleSize==1){
                         finalViewHolder.deleteOrder.setVisibility(View.GONE);
+                        orderCart.setBackgroundResource(R.mipmap.cart);
                         boolean result=shoppingCart.deleteSingleSize(getItem(position).getName());
-                        if (shoppingCart.isEmpty()){
-                            orderCart.setBackgroundResource(R.mipmap.cart);
-                        }
                         if (result){
                             String sumNumber=mContext.getResources().getString(R.string.sumSize)+
                                     shoppingCart.getOrder_size().toString();
@@ -185,9 +188,6 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
             }
         });
         return view;
-    }
-    public ShoppingCart getShoppingCart(){
-        return shoppingCart;
     }
     /**
      * 根据ListView的当前位置获取分类的首字母的Char ascii值

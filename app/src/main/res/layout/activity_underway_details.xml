@@ -7,15 +7,6 @@
     tools:context="com.hlz.activity.UnderwayDetailsActivity">
     <include layout="@layout/app_tool_bar"/>
     <include layout="@layout/item_underway_details_head"/>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/swipe_refresh_layout">
-        <ListView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/underway_details_list"/>
-    </android.support.v4.widget.SwipeRefreshLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -23,7 +14,7 @@
         <Button
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/colorTabBlue"
+            android:background="@color/paink_bg"
             android:textColor="@color/white"
             android:layout_weight="0.5"
             android:id="@+id/finished_indent"
@@ -37,8 +28,17 @@
             android:layout_height="wrap_content"
             android:text="@string/change"
             android:id="@+id/update_indent"
-            android:background="@color/paink_bg"
+            android:background="@color/colorTabBlue"
             android:textColor="@color/white"
             android:layout_weight="0.1"/>
     </LinearLayout>
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/swipe_refresh_layout">
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/underway_details_list"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

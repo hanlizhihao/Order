@@ -23,10 +23,14 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
     private ShoppingCart shoppingCart;
     private List<ItemShoppingCart> data;
     private Context context;
-    public ShoppingCartAdapter (ShoppingCart shoppingCart,Context context){
+    private TextView sumSize;
+    private TextView sumPrice;
+    public ShoppingCartAdapter (ShoppingCart shoppingCart,Context context,TextView sumSize,TextView sumPrice){
         this.shoppingCart=shoppingCart;
         this.context=context;
         data=shoppingCart.getItemShoppingCart();
+        this.sumPrice=sumPrice;
+        this.sumSize=sumSize;
     }
     @Override
     public ShoppingCartAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -45,6 +49,8 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
             public void onClick(View view) {
                 shoppingCart.deleteSingleSize(data.get(position).getName());
                 data=shoppingCart.getItemShoppingCart();
+                sumPrice.setText("总价："+shoppingCart.getPrice().toString());
+                sumSize.setText("总数："+shoppingCart.getOrder_size().toString());
                 notifyDataSetChanged();
             }
         });
@@ -53,6 +59,8 @@ public class ShoppingCartAdapter extends RecyclerView.Adapter<ShoppingCartAdapte
             public void onClick(View view) {
                 shoppingCart.addSingleSize(data.get(position).getName());
                 data=shoppingCart.getItemShoppingCart();
+                sumPrice.setText(shoppingCart.getPrice().toString());
+                sumSize.setText(shoppingCart.getOrder_size().toString());
                 notifyDataSetChanged();
             }
         });
