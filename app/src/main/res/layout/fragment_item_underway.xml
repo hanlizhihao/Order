@@ -6,7 +6,7 @@
     android:id="@+id/item_underway_content">
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="85sp">
         <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -89,9 +89,10 @@
         </LinearLayout>
         <Button
             android:layout_toLeftOf="@+id/underway_details"
+            android:layout_alignParentBottom="true"
             android:layout_centerVertical="true"
             android:layout_width="65sp"
-            android:layout_height="65sp"
+            android:layout_height="60sp"
             android:background="@color/colorTabBlue"
             android:id="@+id/reminder"
             android:text="@string/reminder"
@@ -102,11 +103,12 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_width="65sp"
-            android:layout_height="65sp"
-            android:background="@color/orange_bg"
+            android:layout_height="60sp"
+            android:background="@color/best_head_bg"
             android:id="@+id/underway_details"
             android:text="@string/details"
             android:textSize="18sp"
+            android:layout_alignParentBottom="true"
             android:textColor="@color/base_white"/>
     </RelativeLayout>
 </LinearLayout>

@@ -75,7 +75,7 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
         }else{
             holder.waitTime.animateText(StringUtil.change(firstTime-beginTime));
         }
-        holder.servingProgress.setText(indents.get(position).getReserveNumber()+"/"+indents.get(position).getReserveNumber());
+        holder.servingProgress.setText(indents.get(position).getFulfillNumber()+"/"+indents.get(position).getReserveNumber());
         //为列表的每行元素设置点击启动activity
         holder.layout.setOnClickListener(new View.OnClickListener() {
             @Override

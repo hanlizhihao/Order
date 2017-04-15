@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AbsListView;
 import android.widget.Button;
@@ -250,7 +251,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 AlertDialog alertDialog = builder.create();
                 alertDialog.show();
             }else{
-            Intent intent=new Intent();
+            Intent intent=getIntent();
             intent.putExtra("reserveChanged","");
             UnderwayDetailsActivity.this.setResult(0,intent);
             manager.finishActivity();
@@ -393,5 +394,18 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
     public void onPause(){
         MyApplication.getMonitoringTime().end();
         super.onPause();
+    }
+    //点击左上角则退出
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                //  finish();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

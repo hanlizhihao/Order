@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent intent){
         if (requestCode==0&&resultCode==0){
-            if (!"".equals(intent.getStringExtra("reserveChanged"))){
+            if (intent!=null&&!"".equals(intent.getStringExtra("reservedChanged"))){
                 String reserve=intent.getStringExtra("reserveChanged");
                 String fulfill=intent.getStringExtra("fulfillChanged");
                 String id=intent.getStringExtra("id");
