@@ -302,6 +302,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
      * @param indent 由Intent传递过来的参数
      */
     public void setIndentMenus(Indent indent) {
+        indentMenus.clear();
         String reserve = indent.getReserve();
         String fulfill = indent.getFulfill();
         /*对字符串进行处理，基于默认的格式：
@@ -318,22 +319,23 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             }
             for (int i = 0; i < reserves.length; i++) {
                 String[] singleMenuReserve = reserves[i].split("a");
-                IndentMenu indentMenu = new IndentMenu();
+                UnderwayDetailsActivity.IndentMenu indentMenu = new UnderwayDetailsActivity.IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
-                String sign = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
-                indentMenu.setFulfillNumber(sign);
-                indentMenu.setPrice(getSingleGreensPrice(menus, singleMenuReserve[0], singleMenuReserve[1]));
+                String fulfillNumber = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
+                indentMenu.setFulfillNumber(fulfillNumber);
+                indentMenu.setPrice(getSingleGreensPrice(menus, singleMenuReserve));
                 indentMenus.add(indentMenu);
             }
         } else {
             String[] reserves = reserve.split("e");
             for (int i = 0; i < reserves.length; i++) {
                 String[] singleMenuReserve = reserves[i].split("a");
-                IndentMenu indentMenu = new IndentMenu();
+                UnderwayDetailsActivity.IndentMenu indentMenu = new UnderwayDetailsActivity.IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
                 indentMenu.setFulfillNumber("0");
+                indentMenu.setPrice(getSingleGreensPrice(menus,singleMenuReserve));
                 indentMenus.add(indentMenu);
             }
         }
@@ -349,14 +351,16 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         }
     }
 
-    private String getSingleGreensPrice(Map<String, Double> menuMap, String reserveName, String reserveNumber) {
-        Double price = menuMap.get(reserveName);
+    private String getSingleGreensPrice(Map<String, Double> menuMap,String[] singleMenuInformation) {
+        Double price = menuMap.get(singleMenuInformation[0]);
         if (price == null) {
             Log.d(TAG, "订单中的菜，菜单中竟然没有！");
             return "0";
         } else {
-            price = price * Integer.valueOf(reserveNumber);
-            return price.toString();
+            int number =Integer.valueOf(singleMenuInformation[1]);
+            double result=price*number;
+            Log.d(TAG,Double.toString(result));
+            return Double.toString(result);
         }
     }
 

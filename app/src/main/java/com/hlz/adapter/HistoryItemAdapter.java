@@ -33,7 +33,6 @@ public class HistoryItemAdapter extends BaseAdapter {
         TextView greensName;
         TextView price;
         TextView reserveNumber;
-        TextView fulfillNumber;
     }
     @Override
     public int getCount() {
@@ -53,25 +52,23 @@ public class HistoryItemAdapter extends BaseAdapter {
     public View getView(int i, View view, ViewGroup viewGroup) {
         HistoryItemAdapter.ViewHolder viewHolder = null;
         if (view==null){
-            viewHolder=new HistoryItemAdapter.ViewHolder();
+            viewHolder=new ViewHolder();
             view= LayoutInflater.from(context).inflate(R.layout.item_history_details,null);
-            viewHolder.greensName=(TextView)view.findViewById(R.id.greens_name);
-            viewHolder.fulfillNumber=(TextView) view.findViewById(R.id.history_fulfill_number);
-            viewHolder.price=(TextView)view.findViewById(R.id.price);
+            viewHolder.greensName=(TextView)view.findViewById(R.id.history_greens_name);
+            viewHolder.price=(TextView)view.findViewById(R.id.history_price);
             viewHolder.reserveNumber=(TextView)view.findViewById(R.id.history_reserve_number);
             view.setTag(viewHolder);
         }else {
             viewHolder=(HistoryItemAdapter.ViewHolder)view.getTag();
         }
-        final UnderwayDetailsActivity.IndentMenu indentMenu=getItem(i);
-        viewHolder.fulfillNumber.setText(indentMenu.getFulfillNumber());
+        UnderwayDetailsActivity.IndentMenu indentMenu=getItem(i);
         viewHolder.greensName.setText(indentMenu.getName());
         viewHolder.reserveNumber.setText(indentMenu.getReserveNumber());
         viewHolder.price.setText(indentMenu.getPrice());
         if (i%2 ==1){
             view.setBackgroundColor(Color.parseColor("#F5F5DC"));
         }
-        return null;
+        return view;
     }
     public void setIndentMenus(List<UnderwayDetailsActivity.IndentMenu> indentMenus){
         this.indentMenus=indentMenus;

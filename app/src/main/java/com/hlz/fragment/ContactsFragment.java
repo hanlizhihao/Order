@@ -189,6 +189,7 @@ public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnR
     public void onRefresh() {
         NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
         networkUtil.getFinished(null,listener,errorListener,TAG);
+        networkUtil.getCanceled(null,canceledListener,errorListener,TAG);
     }
     /**
      * 设置顶部正在加载的状态

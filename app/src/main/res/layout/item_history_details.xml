@@ -24,16 +24,6 @@
         android:padding="10dp"
         tool:text="asda" />
     <TextView
-        android:id="@+id/history_fulfill_number"
-        android:layout_width="0dp"
-        android:layout_weight="1.3"
-        android:layout_height="wrap_content"
-        android:textSize="18sp"
-        android:textColor="@color/best_head_bg"
-        android:gravity="center_horizontal"
-        android:padding="10dp"
-        tool:text="asda" />
-    <TextView
         android:textColor="@color/best_head_bg"
         android:id="@+id/history_price"
         android:layout_width="0dp"

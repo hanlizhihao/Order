@@ -2,6 +2,7 @@ package com.hlz.activity;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -53,6 +54,7 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
     private int lastItem;
     private NetworkUtil networkUtil;
     private HistoryItemAdapter adapter;
+    private Handler handlerAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -95,14 +97,28 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
         networkUtil = NetworkUtil.getNetworkUtil();
+        adapter=new HistoryItemAdapter(this,indentMenus);
+        list.setAdapter(adapter);
+        handler=new Handler(){
+            @Override
+            public void handleMessage(Message message){
+                if (message.what==1){
+                    adapter=new HistoryItemAdapter(HistoryDetailsActivity.this,indentMenus);
+                    list.setAdapter(adapter);
+                }
+            }
+        };
+        hideWaitDialog();
     }
     private void initToolBar() {
         toolbar.setTitle("桌号：" + indent.getTableId());
         toolbar.setSubtitle("催单次数：" + indent.getReminderNumber());
         setSupportActionBar(toolbar);
         ActionBar actionBar=getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);//决定是否可点击
+        if (actionBar != null) {
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setHomeButtonEnabled(true);//决定是否可点击
+        }
     }
     @Override
     public void onRefresh() {
@@ -117,11 +133,14 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
             setIndentMenus(indent);
             adapter.setIndentMenus(indentMenus);
             handler.sendEmptyMessage(1);
+            handlerAdapter.sendEmptyMessage(1);
+            hideWaitDialog();
         }
     };
     public Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
+            hideWaitDialog();
             Alerter.create(HistoryDetailsActivity.this)
                     .setBackgroundColor(R.color.colorLightBlue)
                     .setTitle("网络出错了哟！")
@@ -152,6 +171,7 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
      * @param indent 由Intent传递过来的参数
      */
     public void setIndentMenus(Indent indent) {
+        indentMenus.clear();
         String reserve = indent.getReserve();
         String fulfill = indent.getFulfill();
         /*对字符串进行处理，基于默认的格式：
@@ -171,9 +191,9 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
                 UnderwayDetailsActivity.IndentMenu indentMenu = new UnderwayDetailsActivity.IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
-                String sign = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
-                indentMenu.setFulfillNumber(sign);
-                indentMenu.setPrice(getSingleGreensPrice(menus, singleMenuReserve[0], singleMenuReserve[1]));
+                String fulfillNumber = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
+                indentMenu.setFulfillNumber(fulfillNumber);
+                indentMenu.setPrice(getSingleGreensPrice(menus, singleMenuReserve));
                 indentMenus.add(indentMenu);
             }
         } else {
@@ -184,6 +204,7 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
                 indentMenu.setFulfillNumber("0");
+                indentMenu.setPrice(getSingleGreensPrice(menus,singleMenuReserve));
                 indentMenus.add(indentMenu);
             }
         }
@@ -199,14 +220,16 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
         }
     }
 
-    private String getSingleGreensPrice(Map<String, Double> menuMap, String reserveName, String reserveNumber) {
-        Double price = menuMap.get(reserveName);
+    private String getSingleGreensPrice(Map<String, Double> menuMap,String[] singleMenuInformation) {
+        Double price = menuMap.get(singleMenuInformation[0]);
         if (price == null) {
             Log.d(TAG, "订单中的菜，菜单中竟然没有！");
             return "0";
         } else {
-            price = price * Integer.valueOf(reserveNumber);
-            return price.toString();
+            int number =Integer.valueOf(singleMenuInformation[1]);
+            double result=price*number;
+            Log.d(TAG,Double.toString(result));
+            return Double.toString(result);
         }
     }
     @Override

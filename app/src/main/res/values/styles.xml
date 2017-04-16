@@ -8,6 +8,7 @@
         <item name="colorAccent">@color/best_head_bg</item>
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:colorBackground">@color/colorLogin</item>
     </style>
     <style name="AppTheme.ActionBar" parent="Base.Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->

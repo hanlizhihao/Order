@@ -6,7 +6,7 @@
     android:orientation="vertical"
     tools:context="com.hlz.activity.UnderwayDetailsActivity">
     <include layout="@layout/app_tool_bar"/>
-    <include layout="@layout/item_underway_details_head"/>
+    <include layout="@layout/history_item_head"/>
     <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
