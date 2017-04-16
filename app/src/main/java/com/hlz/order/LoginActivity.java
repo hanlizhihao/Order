@@ -57,6 +57,7 @@ public class LoginActivity extends Activity {
     TextView settingUrl;
     @InjectView(R.id.forget)
     TextView forget;
+    boolean login;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -65,8 +66,8 @@ public class LoginActivity extends Activity {
         ButterKnife.inject(this);
         showWaitDialog("正在初始化...");
         SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
-        boolean login=sp.getBoolean("isLogin",false);
-        initDatabase(login);
+        login=sp.getBoolean("isLogin",false);
+        initDatabase();
     }
     @OnClick({R.id.remember, R.id.login_btn, R.id.setting_url, R.id.forget})
     public void onClick(View view) {
@@ -142,7 +143,7 @@ public class LoginActivity extends Activity {
             }
         }
     };
-    public Response.Listener getMenusListener=new Response.Listener<String>() {
+    public Response.Listener<String> getMenusListener=new Response.Listener<String>() {
         @Override
         public void onResponse(String s) {
             try{
@@ -166,10 +167,8 @@ public class LoginActivity extends Activity {
                     }else{
                         Log.d(TAG,"向数据库插入菜单信息成功");
                         Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT);
-                        SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
-                        boolean islogin=sp.getBoolean("isLogin",false);
                         hideWaitDialog();
-                        if (islogin){
+                        if (login){
                             Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                             startActivity(intent);
                             LoginActivity.this.finish();
@@ -222,7 +221,7 @@ public class LoginActivity extends Activity {
         }
     }
     //若已经登录则数据库初始化之后，直接跳转到主Activity
-    public void initDatabase(boolean islogin){
+    public void initDatabase(){
         NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
         if (isFristRun()){
             //如果是第一次运行，则先创建数据库
@@ -235,7 +234,7 @@ public class LoginActivity extends Activity {
             networkUtil.getMenuVersion(getMenuVersion,errorListener,TAG);
         }
     }
-    public Response.Listener getMenuVersion=new Response.Listener<String>() {
+    public Response.Listener<String> getMenuVersion=new Response.Listener<String>() {
         @Override
         public void onResponse(String s) {
             if (s!=null&&!"".equals(s)){
@@ -243,9 +242,8 @@ public class LoginActivity extends Activity {
                 String version=sp.getString("version",null);
                 if (version!=null&&s.equals(version)){
                     Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT).show();
-                    boolean islogin=sp.getBoolean("isLogin",false);
                     hideWaitDialog();
-                    if (islogin){
+                    if (login){
                         Intent intent=new Intent(LoginActivity.this,MainActivity.class);
                         startActivity(intent);
                         LoginActivity.this.finish();

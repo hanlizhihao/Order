@@ -35,4 +35,6 @@
     <string name="finished">结算</string>
     <string name="change">修改</string>
     <string name="reserve_number">订菜数量</string>
+    <string name="reduce_serve_number">减少订菜数量</string>
+    <string name="add_reserve_number">增加订菜数量</string>
 </resources>

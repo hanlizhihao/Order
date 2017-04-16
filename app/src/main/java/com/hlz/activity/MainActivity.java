@@ -221,29 +221,44 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         }
         return super.onOptionsItemSelected(item);
     }
-    //用于获取UnderwayDetailsActivity返回的结果
+
+    /**
+     * 若发生改变则返回改变后的订菜字符串和上菜字符串
+     * @param requestCode 请求的编码
+     * @param resultCode 结果的编码
+     * @param intent 参数，带有结果
+     */
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent intent){
         if (requestCode==0&&resultCode==0){
-            if (intent!=null&&!"".equals(intent.getStringExtra("reservedChanged"))){
+            if (intent!=null&&intent.getStringExtra("reservedChanged")!=null&&!"".equals(intent.getStringExtra("reservedChanged"))){
                 String reserve=intent.getStringExtra("reserveChanged");
                 String fulfill=intent.getStringExtra("fulfillChanged");
                 String id=intent.getStringExtra("id");
-                Integer reserveNumber=reserve.substring(0,reserve.length()-1).split("e").length;
-                Integer fulfillNumber=fulfill.substring(0,fulfill.length()-1).split("e").length;
+                String[] reserves=reserve.substring(0,reserve.length()-1).split("e");
+                String[] fulfillNumbers=fulfill.substring(0,fulfill.length()-1).split("e");
+                int fulfillNumber=0;
+                int reserveNumber=0;
+                for (String s:reserves){
+                    String[] singleReserve=s.split("a");
+                    reserveNumber=reserveNumber+Integer.valueOf(singleReserve[1]);
+                }
+                for (String s:fulfillNumbers){
+                    String[] singleFulfill=s.split("a");
+                    fulfillNumber=fulfillNumber+Integer.valueOf(singleFulfill[1]);
+                }
                 //获取到Adapter的数据源
                 FragmentManager manager=getSupportFragmentManager();
                 chatsFragment fragment=(chatsFragment) manager.getFragments().get(0);
                 List<Indent> indentList=fragment.adapter.getIndents();
-                int i=0;
-                for (Indent indent:indentList){
-                    if (id.equals(indent.getId().toString())){
+                for (int i=0;i<indentList.size();i++){
+                    if (id.equals(indentList.get(i).getId().toString())){
+                        Indent indent=indentList.get(i);
                         indent.setFulfill(fulfill);
                         indent.setReserve(reserve);
                         indent.setReserveNumber(reserveNumber);
                         indent.setFulfillNumber(fulfillNumber);
                         indentList.add(i,indent);
-                        i=i+1;
                         break;
                     }
                 }

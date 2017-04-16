@@ -9,25 +9,33 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hlz.activity.UnderwayDetailsActivity;
+import com.hlz.database.DatabaseUtil;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
+import com.hlz.util.DoubleClickExitHelper;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
 
 public class UnderwayItemAdapter extends BaseAdapter {
     private List<UnderwayDetailsActivity.IndentMenu> indentMenus;
     private Context context;
     private UnderwayDetailsActivity activity;
+    private Map<String,Double> menus;
     public UnderwayItemAdapter(UnderwayDetailsActivity activity, List<UnderwayDetailsActivity.IndentMenu> indentMenus){
         this.indentMenus=indentMenus;
         this.activity=activity;
         context= MyApplication.getContext();
+        DatabaseUtil databaseUtil=new DatabaseUtil();
+        databaseUtil.DataBaseUtilInit(context);
+        menus=databaseUtil.queryDatabase();
     }
     @Override
     public int getCount() {
@@ -50,9 +58,13 @@ public class UnderwayItemAdapter extends BaseAdapter {
             viewHolder=new ViewHolder();
             view=LayoutInflater.from(context).inflate(R.layout.item_underway_details,null);
             viewHolder.greensName=(TextView)view.findViewById(R.id.greens_name);
-            viewHolder.fulfillNumber=(NumberPicker)view.findViewById(R.id.fulfill_number);
+            viewHolder.fulfillNumber=(TextView) view.findViewById(R.id.fulfill_number);
             viewHolder.price=(TextView)view.findViewById(R.id.price);
-            viewHolder.reserveNumber=(NumberPicker)view.findViewById(R.id.reserve_number);
+            viewHolder.reserveNumber=(TextView) view.findViewById(R.id.reserve_number);
+            viewHolder.minusFulfillNumber=(ImageButton)view.findViewById(R.id.minus_fulfill_number);
+            viewHolder.minusReserveNumber=(ImageButton)view.findViewById(R.id.minus_reserve_number);
+            viewHolder.plusFulfillNumber=(ImageButton)view.findViewById(R.id.plus_fulfill_number);
+            viewHolder.plusReserveNumber=(ImageButton)view.findViewById(R.id.plus_reserve_number);
             view.setTag(viewHolder);
         }else {
             viewHolder=(ViewHolder)view.getTag();
@@ -60,37 +72,59 @@ public class UnderwayItemAdapter extends BaseAdapter {
         final UnderwayDetailsActivity.IndentMenu indentMenu=getItem(i);
         viewHolder.greensName.setText(indentMenu.getName());
         viewHolder.price.setText(indentMenu.getPrice());
-        viewHolder.reserveNumber.setMinValue(0);
-        viewHolder.reserveNumber.setMaxValue(99);
-        setNumberPickerTextColor(viewHolder.reserveNumber,R.color.best_head_bg);
-        setNumberPickerTextColor(viewHolder.fulfillNumber,R.color.best_head_bg);
-        viewHolder.reserveNumber.setValue(Integer.valueOf(indentMenu.getReserveNumber()));
-        viewHolder.reserveNumber.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        viewHolder.reserveNumber.setText(getItem(i).getReserveNumber());
+        viewHolder.fulfillNumber.setText(getItem(i).getFulfillNumber());
+        viewHolder.minusReserveNumber.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onValueChange(NumberPicker numberPicker, int old, int newi) {
-                activity.listIsChanged=true;
-                if (newi>=Integer.valueOf(getItem(i).getFulfillNumber())){
-                    getItem(i).setReserveNumber(Integer.toString(newi));
-                    notifyDataSetChanged();
-                }else{//出现了订菜数量小于上菜数量的情况
-                    Toast.makeText(context,"订菜数量不能小于上菜数量！",Toast.LENGTH_LONG).show();
+            public void onClick(View view) {
+                UnderwayDetailsActivity.IndentMenu tempIndentMenu=getItem(i);
+                if (Integer.valueOf(tempIndentMenu.getReserveNumber())<=0){
+                    Toast.makeText(activity,"已经是0了，不能再少了！",Toast.LENGTH_SHORT).show();
+                }else{
+                    //改变数量，改变价格
+                    getItem(i).setReserveNumber(Integer.toString(Integer.valueOf(tempIndentMenu.getReserveNumber())-1));
+                    double tempPrice=Double.valueOf(tempIndentMenu.getPrice());
+                    tempPrice=tempPrice-menus.get(tempIndentMenu.getName());
+                    getItem(i).setPrice(Double.toString(tempPrice));
+                    activity.listIsChanged=true;
                     notifyDataSetChanged();
                 }
             }
         });
-        viewHolder.fulfillNumber.setMinValue(0);
-        viewHolder.fulfillNumber.setMaxValue(99);
-        viewHolder.fulfillNumber.setValue(Integer.valueOf(indentMenu.getFulfillNumber()));
-        viewHolder.fulfillNumber.setOnValueChangedListener(new NumberPicker.OnValueChangeListener() {
+        viewHolder.plusReserveNumber.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onValueChange(NumberPicker numberPicker, int old, int newi) {
+            public void onClick(View view) {
+                getItem(i).setReserveNumber(Integer.toString(Integer.valueOf(getItem(i).getReserveNumber())+1));
+                double tempPrice=Double.valueOf(getItem(i).getPrice());
+                tempPrice=tempPrice+menus.get(getItem(i).getName());
+                getItem(i).setPrice(Double.toString(tempPrice));
                 activity.listIsChanged=true;
-                if (newi<=Integer.valueOf(getItem(i).getReserveNumber())){
-                    getItem(i).setReserveNumber(Integer.toString(newi));
+                notifyDataSetChanged();
+            }
+        });
+        viewHolder.plusFulfillNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                int fulfillNumber=Integer.valueOf(getItem(i).getFulfillNumber());
+                int reserveNumber=Integer.valueOf(getItem(i).getReserveNumber());
+                if (fulfillNumber<reserveNumber){
+                    getItem(i).setFulfillNumber(Integer.toString(Integer.valueOf(getItem(i).getFulfillNumber())+1));
+                    activity.listIsChanged=true;
                     notifyDataSetChanged();
                 }else{
-                    Toast.makeText(context,"上菜数量不能大于订菜数量",Toast.LENGTH_LONG).show();
+                    Toast.makeText(activity,"上菜数量不能大于订菜数量",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+        viewHolder.minusFulfillNumber.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (Integer.valueOf(getItem(i).getFulfillNumber())>0){
+                    getItem(i).setFulfillNumber(Integer.toString(Integer.valueOf(getItem(i).getFulfillNumber())-1));
+                    activity.listIsChanged=true;
                     notifyDataSetChanged();
+                }else{
+                    Toast.makeText(activity,"已经是0了，不能再少了！",Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -99,35 +133,15 @@ public class UnderwayItemAdapter extends BaseAdapter {
         }
         return view;
     }
-    public boolean setNumberPickerTextColor(NumberPicker numberPicker, int color) {
-        final int count = numberPicker.getChildCount();
-        for (int i = 0; i < count; i++) {
-            View child = numberPicker.getChildAt(i);
-            if (child instanceof EditText) {
-                Field selectorWheelPaintField;
-                try {
-                    selectorWheelPaintField = numberPicker.getClass().getDeclaredField("mSelectorWheelPaint");
-                    selectorWheelPaintField.setAccessible(true);
-                    try {
-                        ((Paint) selectorWheelPaintField.get(numberPicker)).setColor(color);
-                    } catch (IllegalAccessException e) {
-                        e.printStackTrace();
-                    }
-                    ((EditText) child).setTextColor(color);
-                    numberPicker.invalidate();
-                    return true;
-                } catch (NoSuchFieldException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        return false;
-    }
     private class ViewHolder{
         TextView greensName;
         TextView price;
-        NumberPicker reserveNumber;
-        NumberPicker fulfillNumber;
+        TextView reserveNumber;
+        TextView fulfillNumber;
+        ImageButton minusReserveNumber;
+        ImageButton plusReserveNumber;
+        ImageButton minusFulfillNumber;
+        ImageButton plusFulfillNumber;
     }
     public List<UnderwayDetailsActivity.IndentMenu> getIndentMenus(){
         return indentMenus;

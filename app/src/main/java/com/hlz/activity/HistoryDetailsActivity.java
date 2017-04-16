@@ -97,13 +97,13 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
         networkUtil = NetworkUtil.getNetworkUtil();
-        adapter=new HistoryItemAdapter(this,indentMenus);
+        adapter=new HistoryItemAdapter(indentMenus);
         list.setAdapter(adapter);
-        handler=new Handler(){
+        handlerAdapter=new Handler(){
             @Override
             public void handleMessage(Message message){
                 if (message.what==1){
-                    adapter=new HistoryItemAdapter(HistoryDetailsActivity.this,indentMenus);
+                    adapter=new HistoryItemAdapter(indentMenus);
                     list.setAdapter(adapter);
                 }
             }
@@ -177,7 +177,7 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
         /*对字符串进行处理，基于默认的格式：
           地三鲜a1e，这样的格式*/
         reserve = reserve.substring(0, reserve.length() - 1);
-        if (fulfill != null) {
+        if (fulfill != null&&!fulfill.equals("")) {
             fulfill = fulfill.substring(0, fulfill.length() - 1);
             String[] reserves = reserve.split("e");
             String[] fulfills = fulfill.split("e");
@@ -236,7 +236,6 @@ public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRe
     public void onDestroy() {
         super.onDestroy();
         ButterKnife.reset(this);
-        manager.finishActivity();
     }
     @Override
     public void onResume(){

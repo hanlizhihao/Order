@@ -35,7 +35,7 @@ public class StringUtil {
         return time;
     }
     public static String[] fromListToString(List<UnderwayDetailsActivity.IndentMenu> indentMenus){
-        String[] result=new String[2];
+        String[] result={"",""};
         for (UnderwayDetailsActivity.IndentMenu indentMenu:indentMenus){
             result[0]=result[0]+indentMenu.getName()+"a"+indentMenu.getReserveNumber()+"e";
             result[1]=result[1]+indentMenu.getName()+"a"+indentMenu.getFulfillNumber()+"e";

@@ -23,10 +23,8 @@ import java.util.List;
 public class HistoryItemAdapter extends BaseAdapter {
     private List<UnderwayDetailsActivity.IndentMenu> indentMenus;
     private Context context;
-    private HistoryDetailsActivity activity;
-    public HistoryItemAdapter(HistoryDetailsActivity activity,List<UnderwayDetailsActivity.IndentMenu> indentMenus){
+    public HistoryItemAdapter(List<UnderwayDetailsActivity.IndentMenu> indentMenus){
         this.indentMenus=indentMenus;
-        this.activity=activity;
         context= MyApplication.getContext();
     }
     private class ViewHolder{

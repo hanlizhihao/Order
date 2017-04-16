@@ -83,12 +83,12 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 Indent indent=indents.get(position);
                 Intent intent=new Intent(activity,UnderwayDetailsActivity.class);
                 intent.putExtra("tableID",indent.getTableId());
-                intent.putExtra("id",indent.getId());
+                intent.putExtra("id",indent.getId().toString());
                 intent.putExtra("fulFill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
-                intent.putExtra("reminderNumber",indent.getReminderNumber());
-                intent.putExtra("firstTime",indent.getFirstTime());
-                intent.putExtra("price",indent.getPrice());
+                intent.putExtra("reminderNumber",indent.getReminderNumber().toString());
+                intent.putExtra("firstTime",indent.getFirstTime().toString());
+                intent.putExtra("price",indent.getPrice().toString());
                 activity.startActivityForResult(intent,0);//将会获取Activity返回的结果
             }
         });
@@ -98,12 +98,12 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 Indent indent=indents.get(position);
                 Intent intent=new Intent(activity,UnderwayDetailsActivity.class);
                 intent.putExtra("tableID",indent.getTableId());
-                intent.putExtra("id",indent.getId());
+                intent.putExtra("id",indent.getId().toString());
                 intent.putExtra("fulFill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
-                intent.putExtra("reminderNumber",indent.getReminderNumber());
-                intent.putExtra("firstTime",indent.getFirstTime());
-                intent.putExtra("price",indent.getPrice());
+                intent.putExtra("reminderNumber",indent.getReminderNumber().toString());
+                intent.putExtra("firstTime",indent.getFirstTime().toString());
+                intent.putExtra("price",indent.getPrice().toString());
                 activity.startActivityForResult(intent,0);//将会获取Activity返回的结果
             }
         });
