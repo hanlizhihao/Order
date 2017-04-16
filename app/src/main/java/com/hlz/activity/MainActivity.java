@@ -229,8 +229,8 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 String reserve=intent.getStringExtra("reserveChanged");
                 String fulfill=intent.getStringExtra("fulfillChanged");
                 String id=intent.getStringExtra("id");
-                Integer reserveNumber=reserve.substring(0,reserve.length()-1).length();
-                Integer fulfillNumber=fulfill.substring(0,fulfill.length()-1).length();
+                Integer reserveNumber=reserve.substring(0,reserve.length()-1).split("e").length;
+                Integer fulfillNumber=fulfill.substring(0,fulfill.length()-1).split("e").length;
                 //获取到Adapter的数据源
                 FragmentManager manager=getSupportFragmentManager();
                 chatsFragment fragment=(chatsFragment) manager.getFragments().get(0);

@@ -1,29 +1,23 @@
 package com.hlz.activity;
 
 import android.app.ProgressDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.AbsListView;
-import android.widget.Button;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.google.gson.Gson;
-import com.hlz.adapter.UnderwayItemAdapter;
+import com.hlz.adapter.HistoryItemAdapter;
 import com.hlz.database.DatabaseUtil;
 import com.hlz.entity.Indent;
 import com.hlz.net.NetworkUtil;
@@ -31,7 +25,6 @@ import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
 import com.hlz.util.DialogHelp;
-import com.hlz.util.StringUtil;
 import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
@@ -42,79 +35,28 @@ import java.util.Set;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
-import butterknife.OnClick;
 
-/**
- * 正在进行订单的详情页，主要功能有：
- * 1.对单个订单进行结算或者修改。
- * 要求是：在结算前提示是否验证手机以及对总价的更改，修改后如果要退出Activity则提示是否保存更改
- * 2.具有toolBar，对不同的订单，显示不同toolBar
- */
-public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+public class HistoryDetailsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener{
     private boolean _isVisible = true;
     private ProgressDialog _waitDialog;
-    public final String TAG = "UnderwayDetailsActivity";
+    private final String TAG="HistoryDetailsActivity";
     @InjectView(R.id.toolbar)
     Toolbar toolbar;
-    @InjectView(R.id.underway_details_list)
+    @InjectView(R.id.history_details_list)
     ListView list;
-    @InjectView(R.id.finished_indent)
-    Button finishedIndent;
-    @InjectView(R.id.update_indent)
-    Button updateIndent;
     @InjectView(R.id.swipe_refresh_layout)
     SwipeRefreshLayout refreshLayout;
-    public static class IndentMenu {
-        private String name;
-        private String reserveNumber;
-        private String fulfillNumber;
-        private String price;
-
-        public String getName() {
-            return name;
-        }
-
-        public void setName(String name) {
-            this.name = name;
-        }
-
-        public String getReserveNumber() {
-            return reserveNumber;
-        }
-
-        public void setReserveNumber(String reserveNumber) {
-            this.reserveNumber = reserveNumber;
-        }
-
-        public String getFulfillNumber() {
-            return fulfillNumber;
-        }
-
-        public void setFulfillNumber(String fulfillNumber) {
-            this.fulfillNumber = fulfillNumber;
-        }
-
-        public String getPrice() {
-            return price;
-        }
-
-        public void setPrice(String price) {
-            this.price = price;
-        }
-    }
-    private List<IndentMenu> indentMenus=new ArrayList<>();
+    private List<UnderwayDetailsActivity.IndentMenu> indentMenus=new ArrayList<>();
     private AppManager manager;
     private Indent indent;
     private Map<String, Double> menus;//数据库中的菜单
     private int lastItem;
     private NetworkUtil networkUtil;
-    public boolean listIsChanged = false;
-    private UnderwayItemAdapter adapter;
-
+    private HistoryItemAdapter adapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_underway_details);
+        setContentView(R.layout.activity_history_details);
         showWaitDialog("正在努力加载数据...");
         ButterKnife.inject(this);
         //取出传递过来的数据，tableID,reserve,fulfill,reminderNumber,id
@@ -153,10 +95,14 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
         networkUtil = NetworkUtil.getNetworkUtil();
-        //设置Adapter
-        adapter = new UnderwayItemAdapter(this, indentMenus);
-        list.setAdapter(adapter);
-        hideWaitDialog();
+    }
+    private void initToolBar() {
+        toolbar.setTitle("桌号：" + indent.getTableId());
+        toolbar.setSubtitle("催单次数：" + indent.getReminderNumber());
+        setSupportActionBar(toolbar);
+        ActionBar actionBar=getSupportActionBar();
+        actionBar.setDisplayHomeAsUpEnabled(true);
+        actionBar.setHomeButtonEnabled(true);//决定是否可点击
     }
     @Override
     public void onRefresh() {
@@ -176,7 +122,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
     public Response.ErrorListener errorListener = new Response.ErrorListener() {
         @Override
         public void onErrorResponse(VolleyError volleyError) {
-            Alerter.create(UnderwayDetailsActivity.this)
+            Alerter.create(HistoryDetailsActivity.this)
                     .setBackgroundColor(R.color.colorLightBlue)
                     .setTitle("网络出错了哟！")
                     .setText("您可能与服务器失去连接！")
@@ -201,102 +147,6 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             refreshLayout.setEnabled(true);
         }
     }
-    @OnClick({R.id.finished_indent, R.id.update_indent})
-    public void onViewClicked(View view) {
-        switch (view.getId()) {
-            case R.id.finished_indent:
-                //提示，验证手机号
-                break;
-            case R.id.update_indent:
-                //点击之后，重置判断改变的变量
-                break;
-        }
-    }
-    String[] reserveAndFulfill;
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event){
-        super.onKeyDown(keyCode,event);
-        if (listIsChanged){
-               AlertDialog.Builder builder = new AlertDialog.Builder(UnderwayDetailsActivity.this);
-                builder.setTitle("注意：");
-                builder.setMessage("检测到数据已经被更改，是否保存更改？");
-                builder.setIcon(R.mipmap.logo);
-                DialogInterface.OnClickListener dialog = new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface arg0, int arg1) {
-                        Intent intent=getIntent();
-                        if (arg1 == DialogInterface.BUTTON_POSITIVE) {
-                            showWaitDialog("正在保存更改");
-                            NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
-                            /**
-                             * 更新Indent需要向后台发送所有关于它的信息
-                             */
-                            indentMenus=adapter.getIndentMenus();
-                            reserveAndFulfill=StringUtil.fromListToString(indentMenus);
-                            indent.setReserve(reserveAndFulfill[0]);
-                            indent.setFulfill(reserveAndFulfill[1]);
-                            networkUtil.updateIndent(indent,updateIndentListener,errorListener,TAG);
-                            //网络请求，修改数据，结束Activity，并传递一些数据已经更改，
-                        } else if (arg1 == DialogInterface.BUTTON_NEGATIVE) {
-                            intent.putExtra("reserveChanged","");
-                            UnderwayDetailsActivity.this.setResult(0,intent);
-                            manager.finishActivity();
-                            //将结束Activity
-                        }
-                    }
-                };
-                builder.setPositiveButton("取消", dialog);
-                builder.setNegativeButton("确定", dialog);
-                AlertDialog alertDialog = builder.create();
-                alertDialog.show();
-            }else{
-            Intent intent=getIntent();
-            intent.putExtra("reserveChanged","");
-            UnderwayDetailsActivity.this.setResult(0,intent);
-            manager.finishActivity();
-        }
-        return true;
-    }
-
-    /**
-     * 用于改变指定id的Indent
-     */
-    public Response.Listener<String> updateIndentListener=new Response.Listener<String> () {
-        @Override
-        public void onResponse(String o) {
-            hideWaitDialog();
-            if ("success".equals(o)){
-                //成功返回则将新的数据返回给MainActivity
-                Intent intent=getIntent();
-                intent.putExtra("reserveChanged",reserveAndFulfill[0]);
-                intent.putExtra("fulfillChanged",reserveAndFulfill[1]);
-                intent.putExtra("id",indent.getId().toString());
-                Toast.makeText(MyApplication.getContext(),"保存更改数据成功",Toast.LENGTH_SHORT).show();
-                UnderwayDetailsActivity.this.setResult(0,intent);
-                manager.finishActivity();
-            }else {
-                Intent intent=getIntent();
-                intent.putExtra("reserveChanged","");
-                Toast.makeText(MyApplication.getContext(),"保存更改数据失败",Toast.LENGTH_SHORT).show();
-                UnderwayDetailsActivity.this.setResult(0,intent);
-                manager.finishActivity();
-            }
-        }
-    };
-    private void initToolBar() {
-        toolbar.setTitle("桌号：" + indent.getTableId());
-        toolbar.setSubtitle("催单次数：" + indent.getReminderNumber());
-        setSupportActionBar(toolbar);
-        ActionBar actionBar=getSupportActionBar();
-        actionBar.setDisplayHomeAsUpEnabled(true);
-        actionBar.setHomeButtonEnabled(true);//决定是否可点击
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ButterKnife.reset(this);
-    }
     /**
      * 设置数据源
      * @param indent 由Intent传递过来的参数
@@ -318,7 +168,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             }
             for (int i = 0; i < reserves.length; i++) {
                 String[] singleMenuReserve = reserves[i].split("a");
-                IndentMenu indentMenu = new IndentMenu();
+                UnderwayDetailsActivity.IndentMenu indentMenu = new UnderwayDetailsActivity.IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
                 String sign = validateHasFulfill(fulfillMap, singleMenuReserve[0]);
@@ -330,7 +180,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             String[] reserves = reserve.split("e");
             for (int i = 0; i < reserves.length; i++) {
                 String[] singleMenuReserve = reserves[i].split("a");
-                IndentMenu indentMenu = new IndentMenu();
+                UnderwayDetailsActivity.IndentMenu indentMenu = new UnderwayDetailsActivity.IndentMenu();
                 indentMenu.setName(singleMenuReserve[0]);
                 indentMenu.setReserveNumber(singleMenuReserve[1]);
                 indentMenu.setFulfillNumber("0");
@@ -359,7 +209,35 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             return price.toString();
         }
     }
-
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        ButterKnife.reset(this);
+        manager.finishActivity();
+    }
+    @Override
+    public void onResume(){
+        MyApplication.getMonitoringTime().start();
+        super.onResume();
+    }
+    @Override
+    public void onPause(){
+        MyApplication.getMonitoringTime().end();
+        super.onPause();
+    }
+    //点击左上角则退出
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                //  finish();
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
+    }
     //进度对话框
     public ProgressDialog showWaitDialog(String message) {
         if (_isVisible) {
@@ -384,28 +262,5 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 ex.printStackTrace();
             }
         }
-    }
-    @Override
-    public void onResume(){
-        MyApplication.getMonitoringTime().start();
-        super.onResume();
-    }
-    @Override
-    public void onPause(){
-        MyApplication.getMonitoringTime().end();
-        super.onPause();
-    }
-    //点击左上角则退出
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                onBackPressed();
-                //  finish();
-                break;
-            default:
-                break;
-        }
-        return super.onOptionsItemSelected(item);
     }
 }

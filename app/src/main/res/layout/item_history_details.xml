@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
-        android:id="@+id/greens_name"
+        android:id="@+id/history_greens_name"
         android:layout_width="0dp"
         android:layout_weight="1.3"
         android:layout_height="wrap_content"
@@ -13,34 +13,29 @@
         android:gravity="center_horizontal"
         android:padding="10dp"
         tool:text="asda" />
-
-    <NumberPicker
-        android:id="@+id/reserve_number"
+    <TextView
+        android:id="@+id/history_reserve_number"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="50dp"
+        android:layout_weight="1.3"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/best_head_bg"
         android:gravity="center_horizontal"
-        android:textSize="16sp"
-        android:padding="4dp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:padding="10dp"
         tool:text="asda" />
-
-    <NumberPicker
-        android:id="@+id/fulfill_number"
+    <TextView
+        android:id="@+id/history_fulfill_number"
         android:layout_width="0dp"
-        android:layout_weight="1"
-        android:layout_height="50dp"
+        android:layout_weight="1.3"
+        android:layout_height="wrap_content"
+        android:textSize="18sp"
+        android:textColor="@color/best_head_bg"
         android:gravity="center_horizontal"
-        android:padding="4dp"
-        android:textSize="16sp"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
+        android:padding="10dp"
         tool:text="asda" />
-
     <TextView
         android:textColor="@color/best_head_bg"
-        android:id="@+id/price"
+        android:id="@+id/history_price"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:textSize="18sp"

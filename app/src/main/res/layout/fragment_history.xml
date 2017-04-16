@@ -1,20 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
+    <!-- 显示物品列表的ListView -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:weightSum="1">
-        <Button
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <Space
             android:layout_width="0dp"
-            android:layout_height="217dp"
-            android:text="@string/add"
-            android:layout_weight="0.24"
-            android:textSize="60sp"
-            android:id="@+id/f"/>
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@color/colorTabBlue"
+            android:text="已经完成"
+            android:textColor="@color/white"
+            android:id="@+id/finished"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"/>
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:text="已经取消"
+            android:textColor="@color/white"
+            android:background="@color/colorLightPink"
+            android:id="@+id/canceled"/>
+        <Space
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"/>
     </LinearLayout>
-
+    <include layout="@layout/item_underway_details_head" />
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:visibility="visible">
+        <com.lqr.recyclerview.LQRRecyclerView
+            android:id="@+id/list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:rv_divider_color="@color/best_head_bg"
+            app:rv_divider_size="5dp"
+            app:rv_orientation="vertical"
+            app:rv_default_animator_open="true"
+            app:rv_type="grid"
+            app:rv_column="1"/>
+    </android.support.v4.widget.SwipeRefreshLayout>
 </LinearLayout>

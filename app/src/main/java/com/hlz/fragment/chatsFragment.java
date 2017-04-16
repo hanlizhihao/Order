@@ -58,6 +58,7 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         footerTextview = (TextView) footView.findViewById(R.id.foot_text);
         planList=(LQRRecyclerView)v.findViewById(R.id.plan_list);
         initUnderwayData();
+        //与后台Service联系
         handlerService=new Handler(){
             @Override
             public void handleMessage(Message message){
@@ -92,7 +93,6 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mSwipeRefreshLayout.setColorSchemeResources(
                 R.color.swiperefresh_color1, R.color.swiperefresh_color2,
                 R.color.swiperefresh_color3, R.color.swiperefresh_color4);
-        //持续的改变等待时间
         handlerAdapter=new Handler(){
             @Override
             public void handleMessage(Message message){

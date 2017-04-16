@@ -101,6 +101,27 @@ public class NetworkUtil {
         request.setTag(TAG);
         queue.add(request);
     }
+    //id为页码,获取已完成的数据集
+    public void getFinished(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request;
+        if (id==null){
+            request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"finished").getUrl()+"1",listener,errorListener);
+        }else{
+            request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"finished").getUrl()+id,listener,errorListener);
+        }
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void getCanceled(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request;
+        if (id==null){
+            request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"canceled").getUrl()+"1",listener,errorListener);
+        }else{
+            request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"canceled").getUrl()+id,listener,errorListener);
+        }
+        request.setTag(TAG);
+        queue.add(request);
+    }
     public void canceledRequest(String TAG){
         queue.cancelAll(TAG);
     }
