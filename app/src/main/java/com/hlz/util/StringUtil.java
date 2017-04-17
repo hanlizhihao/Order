@@ -1,5 +1,7 @@
 package com.hlz.util;
 
+import android.util.Log;
+
 import com.hlz.activity.UnderwayDetailsActivity;
 
 import java.util.List;

@@ -212,7 +212,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 break;
         }
     }
-    String[] reserveAndFulfill;
+    private String[] reserveAndFulfill;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event){
         super.onKeyDown(keyCode,event);
@@ -309,7 +309,6 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
           地三鲜a1e，这样的格式*/
         reserve = reserve.substring(0, reserve.length() - 1);
         if (fulfill != null&&!fulfill.equals("")) {
-            Log.d("!!!!!!setIndentMenus",fulfill);
             fulfill = fulfill.substring(0, fulfill.length() - 1);
             String[] reserves = reserve.split("e");
             String[] fulfills = fulfill.split("e");
@@ -360,7 +359,6 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         } else {
             int number =Integer.valueOf(singleMenuInformation[1]);
             double result=price*number;
-            Log.d(TAG,Double.toString(result));
             return Double.toString(result);
         }
     }

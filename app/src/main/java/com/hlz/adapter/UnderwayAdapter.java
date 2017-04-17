@@ -84,7 +84,7 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 Intent intent=new Intent(activity,UnderwayDetailsActivity.class);
                 intent.putExtra("tableID",indent.getTableId());
                 intent.putExtra("id",indent.getId().toString());
-                intent.putExtra("fulFill",indent.getFulfill());
+                intent.putExtra("fulfill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
                 intent.putExtra("reminderNumber",indent.getReminderNumber().toString());
                 intent.putExtra("firstTime",indent.getFirstTime().toString());
@@ -99,7 +99,7 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 Intent intent=new Intent(activity,UnderwayDetailsActivity.class);
                 intent.putExtra("tableID",indent.getTableId());
                 intent.putExtra("id",indent.getId().toString());
-                intent.putExtra("fulFill",indent.getFulfill());
+                intent.putExtra("fulfill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
                 intent.putExtra("reminderNumber",indent.getReminderNumber().toString());
                 intent.putExtra("firstTime",indent.getFirstTime().toString());

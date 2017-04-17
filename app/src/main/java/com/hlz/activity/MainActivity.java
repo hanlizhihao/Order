@@ -9,12 +9,14 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
+import com.hlz.adapter.UnderwayAdapter;
 import com.hlz.animationlibrary.CubeOutTransformer;
 import com.hlz.entity.Indent;
 import com.hlz.fragment.ContactsFragment;
@@ -32,6 +34,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements RadioGroup.OnCheckedChangeListener
 {
+    private final String TAG="MainActivity";
     private boolean _isVisible=true;
     private ProgressDialog _waitDialog;
     private int mSelectedItem;
@@ -46,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private DoubleClickExitHelper mDoubleClickExit;
     private AppManager appManager;
     private Toolbar toolbar;
+    Fragment chatsFragment;
     //设备运行时间计时
     @Override
     public void onResume(){
@@ -90,7 +94,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
 
         fragmentList = new ArrayList<>() ;
 
-        Fragment chatsFragment = new chatsFragment() ;
+        chatsFragment = new chatsFragment() ;
         Fragment contactsFragment = new ContactsFragment();
         Fragment discoverFragment = new DiscoverFragment();
         Fragment meFragment = new MeFragment();
@@ -231,10 +235,11 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     @Override
     public void onActivityResult(int requestCode,int resultCode,Intent intent){
         if (requestCode==0&&resultCode==0){
-            if (intent!=null&&intent.getStringExtra("reservedChanged")!=null&&!"".equals(intent.getStringExtra("reservedChanged"))){
+            if (intent!=null&&intent.getStringExtra("reserveChanged")!=null&&!"".equals(intent.getStringExtra("reserveChanged"))){
                 String reserve=intent.getStringExtra("reserveChanged");
                 String fulfill=intent.getStringExtra("fulfillChanged");
                 String id=intent.getStringExtra("id");
+                Log.d(TAG,id);
                 String[] reserves=reserve.substring(0,reserve.length()-1).split("e");
                 String[] fulfillNumbers=fulfill.substring(0,fulfill.length()-1).split("e");
                 int fulfillNumber=0;
@@ -248,22 +253,20 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     fulfillNumber=fulfillNumber+Integer.valueOf(singleFulfill[1]);
                 }
                 //获取到Adapter的数据源
-                FragmentManager manager=getSupportFragmentManager();
-                chatsFragment fragment=(chatsFragment) manager.getFragments().get(0);
+                chatsFragment fragment=(chatsFragment)chatsFragment;
                 List<Indent> indentList=fragment.adapter.getIndents();
+                int idInt=Integer.valueOf(id);
                 for (int i=0;i<indentList.size();i++){
-                    if (id.equals(indentList.get(i).getId().toString())){
-                        Indent indent=indentList.get(i);
-                        indent.setFulfill(fulfill);
-                        indent.setReserve(reserve);
-                        indent.setReserveNumber(reserveNumber);
-                        indent.setFulfillNumber(fulfillNumber);
-                        indentList.add(i,indent);
+                    if (idInt==indentList.get(i).getId()){
+                        indentList.get(i).setFulfill(fulfill);
+                        indentList.get(i).setReserve(reserve);
+                        indentList.get(i).setReserveNumber(reserveNumber);
+                        indentList.get(i).setFulfillNumber(fulfillNumber);
                         break;
                     }
                 }
-                fragment.adapter.setIndents(indentList);
-                fragment.adapter.notifyDataSetChanged();
+                UnderwayAdapter adapter=new UnderwayAdapter(this,indentList);
+                fragment.getPlanList().setAdapter(adapter);
             }
         }
     }

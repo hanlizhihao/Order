@@ -186,4 +186,7 @@ public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefr
                     .show();
         }
     };
+    public LQRRecyclerView getPlanList(){
+        return planList;
+    }
 }
