@@ -2,6 +2,8 @@ package com.hlz.order;
 
 import android.app.Application;
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 
 import com.hlz.util.AppManager;
 import com.hlz.util.MonitoringTime;

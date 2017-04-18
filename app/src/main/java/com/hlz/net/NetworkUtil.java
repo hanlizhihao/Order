@@ -1,19 +1,15 @@
 package com.hlz.net;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.hlz.entity.Indent;
 import com.hlz.order.MyApplication;
-
-import org.json.JSONArray;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,7 +44,7 @@ public class NetworkUtil {
         StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"login").getUrl(),listener,errorListener){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> map = new HashMap<String, String>();
+                Map<String, String> map = new HashMap<>();
                 map.put("username", username);
                 map.put("password", password);
                 return map;
@@ -86,6 +82,38 @@ public class NetworkUtil {
                 map.put("reminderNumber", indent.getReminderNumber().toString());
                 map.put("price", indent.getPrice().toString());
                 map.put("time", indent.getFirstTime().toString());
+                return map;
+            }
+        };
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void finishedIndent(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"finishedIndentNotTelephone").getUrl()+id,listener,
+                errorListener);
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void finishedIndent(String id, final String telephone, final String price, Response.Listener<String> listener, Response.ErrorListener
+            errorListener, String TAG){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"finishedIndent").getUrl()+id,listener,errorListener){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("telephone", telephone);
+                map.put("price",price);
+                return map;
+            }
+        };
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void validateTelephone(final String telephone, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"validateTelephone").getUrl(),listener,errorListener){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("telephone", telephone);
                 return map;
             }
         };

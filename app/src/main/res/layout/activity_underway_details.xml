@@ -18,18 +18,22 @@
             android:layout_weight="0.5"
             android:id="@+id/finished_indent"
             android:text="@string/finished"/>
-        <Space
-            android:layout_width="wrap_content"
+        <Button
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:background="@color/green_bfg"
+            android:textColor="@color/white"
+            android:text="添加菜品"
+            android:id="@+id/add_green"
             android:layout_weight="0.5"/>
         <Button
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="@string/change"
             android:id="@+id/update_indent"
             android:background="@color/colorTabBlue"
             android:textColor="@color/white"
-            android:layout_weight="0.1"/>
+            android:layout_weight="0.5"/>
     </LinearLayout>
     <include layout="@layout/item_underway_details_head"/>
     <android.support.v4.widget.SwipeRefreshLayout

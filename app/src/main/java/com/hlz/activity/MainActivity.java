@@ -3,13 +3,14 @@ package com.hlz.activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,10 +20,10 @@ import android.widget.RadioGroup;
 import com.hlz.adapter.UnderwayAdapter;
 import com.hlz.animationlibrary.CubeOutTransformer;
 import com.hlz.entity.Indent;
-import com.hlz.fragment.ContactsFragment;
+import com.hlz.fragment.HistoryFragment;
 import com.hlz.fragment.DiscoverFragment;
 import com.hlz.fragment.MeFragment;
-import com.hlz.fragment.chatsFragment;
+import com.hlz.fragment.UnderwayFragment;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
@@ -50,6 +51,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     private AppManager appManager;
     private Toolbar toolbar;
     Fragment chatsFragment;
+    Fragment contactsFragment;
+    Fragment discoverFragment;
+    Fragment meFragment;
     //设备运行时间计时
     @Override
     public void onResume(){
@@ -91,13 +95,12 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     public void InitViewPager()
     {
         main_viewPager = (ViewPager) findViewById(R.id.main_ViewPager);
-
         fragmentList = new ArrayList<>() ;
 
-        chatsFragment = new chatsFragment() ;
-        Fragment contactsFragment = new ContactsFragment();
-        Fragment discoverFragment = new DiscoverFragment();
-        Fragment meFragment = new MeFragment();
+        chatsFragment = new UnderwayFragment() ;
+        contactsFragment = new HistoryFragment();
+        discoverFragment = new DiscoverFragment();
+        meFragment = new MeFragment();
 
         //将各Fragment加入数组中
         fragmentList.add(chatsFragment);
@@ -239,7 +242,6 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 String reserve=intent.getStringExtra("reserveChanged");
                 String fulfill=intent.getStringExtra("fulfillChanged");
                 String id=intent.getStringExtra("id");
-                Log.d(TAG,id);
                 String[] reserves=reserve.substring(0,reserve.length()-1).split("e");
                 String[] fulfillNumbers=fulfill.substring(0,fulfill.length()-1).split("e");
                 int fulfillNumber=0;
@@ -253,7 +255,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     fulfillNumber=fulfillNumber+Integer.valueOf(singleFulfill[1]);
                 }
                 //获取到Adapter的数据源
-                chatsFragment fragment=(chatsFragment)chatsFragment;
+                UnderwayFragment fragment=(UnderwayFragment)chatsFragment;
                 List<Indent> indentList=fragment.adapter.getIndents();
                 int idInt=Integer.valueOf(id);
                 for (int i=0;i<indentList.size();i++){
@@ -266,6 +268,21 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                     }
                 }
                 UnderwayAdapter adapter=new UnderwayAdapter(this,indentList);
+                fragment.adapter=adapter;
+                fragment.getPlanList().setAdapter(adapter);
+            }else if (intent!=null&&intent.getIntExtra("reserveChanged",0)!=0){
+                //当结算时，将会返回int的id,找出以后删除指定的indent
+                UnderwayFragment fragment=(UnderwayFragment)chatsFragment;
+                List<Indent> indentList=fragment.adapter.getIndents();
+                int id=intent.getIntExtra("reserveChanged",0);
+                for (int i=0;i<indentList.size();i++){
+                    if (id==indentList.get(i).getId()){
+                        indentList.remove(i);
+                        break;
+                    }
+                }
+                UnderwayAdapter adapter=new UnderwayAdapter(this,indentList);
+                fragment.adapter=adapter;
                 fragment.getPlanList().setAdapter(adapter);
             }
         }
@@ -294,4 +311,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
             }
         }
     }
+    /**
+     * 用于处理后台Service返回的消息处理者
+     */
+    public Handler rabbitServiceHandler=new Handler(){
+        @Override
+        public void handleMessage(Message message){
+            UnderwayFragment fragment=(UnderwayFragment) chatsFragment;
+        }
+    };
 }

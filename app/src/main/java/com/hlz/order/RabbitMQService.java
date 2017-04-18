@@ -28,6 +28,7 @@ public class RabbitMQService extends Service {
     private ConnectionFactory factory=new ConnectionFactory();
     private Thread subscribeThread;
     private static Handler handler;//用于更新ui
+
     public RabbitMQService() {
     }
     public static void setHandler(Handler handler1) {
@@ -38,11 +39,9 @@ public class RabbitMQService extends Service {
         factory.setPort(5672);
         factory.setUsername("guest");
         factory.setPassword("guest");
-        Log.i(TAG, "我的服务器连接配置完成");
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.e(TAG, "onStartCommand: ");
         //连接设置
         setupConnectionFactory();
         return START_NOT_STICKY;
@@ -55,7 +54,6 @@ public class RabbitMQService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.e(TAG, "onDestroy: ");
         subscribeThread.interrupt();
     }
     /**

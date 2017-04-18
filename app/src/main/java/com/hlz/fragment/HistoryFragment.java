@@ -35,7 +35,7 @@ import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
 
-public class ContactsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class HistoryFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     final String TAG="historyFragment";
     @InjectView(R.id.finished)
     Button finished;

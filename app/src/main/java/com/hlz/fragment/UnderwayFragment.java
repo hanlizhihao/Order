@@ -34,7 +34,7 @@ import com.tapadoo.alerter.Alerter;
 import java.util.List;
 
 
-public class chatsFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
+public class UnderwayFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener{
     String TAG="planFragment";
     public UnderwayAdapter adapter;
     SwipeRefreshLayout mSwipeRefreshLayout;
