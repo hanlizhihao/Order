@@ -42,11 +42,10 @@ public class UnderwayFragment extends Fragment implements SwipeRefreshLayout.OnR
     private RelativeLayout loading;
     LQRRecyclerView planList;
     ProgressBar footerProgressbar;
-    TextView footerTextview;
+    TextView footerTextView;
     private int lastItem;
     private List<Indent> indents;//网络请求的Indent数据集
     private MainActivity mainActivity;
-    private Handler handlerService;
     private Handler handlerAdapter;
     private void initView(View v){
         mainActivity=(MainActivity) getActivity();
@@ -55,20 +54,9 @@ public class UnderwayFragment extends Fragment implements SwipeRefreshLayout.OnR
         footView = LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.item_footer, null);
         loading = (RelativeLayout) footView.findViewById(R.id.xlistview_footer_content);
         footerProgressbar = (ProgressBar) footView.findViewById(R.id.foot_progressbar);
-        footerTextview = (TextView) footView.findViewById(R.id.foot_text);
+        footerTextView = (TextView) footView.findViewById(R.id.foot_text);
         planList=(LQRRecyclerView)v.findViewById(R.id.plan_list);
         initUnderwayData();
-        //与后台Service联系
-        handlerService=new Handler(){
-            @Override
-            public void handleMessage(Message message){
-                if (message.what==1){
-                    onRefresh();
-                }
-            }
-        };
-        Intent intent=new Intent(mainActivity, RabbitMQService.class);
-        mainActivity.startService(intent);
     }
     public void initUnderwayData(){
         NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
@@ -106,13 +94,13 @@ public class UnderwayFragment extends Fragment implements SwipeRefreshLayout.OnR
     }
     protected void loadData() {
         footerProgressbar.setVisibility(View.VISIBLE);
-        footerTextview.setText("加载中");
+        footerTextView.setText("加载中");
         handlerRefresh.postDelayed(new Runnable() {
             @Override
             public void run() {
                 //如果数据很多，为了不一次性全部显示出来，所以Adapeter要这样设计一个函数，
                 //用于标识显示几页数据
-                footerTextview.setText("加载更多");
+                footerTextView.setText("加载更多");
                 footerProgressbar.setVisibility(View.INVISIBLE);
             }
         }, 2000);

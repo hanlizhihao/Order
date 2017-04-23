@@ -2,10 +2,8 @@ package com.hlz.order;
 
 import android.app.Service;
 import android.content.Intent;
-import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
-import android.os.Message;
 import android.util.Log;
 
 import com.rabbitmq.client.AMQP;
@@ -15,9 +13,6 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
-import com.rabbitmq.client.QueueingConsumer;
-
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -27,10 +22,7 @@ public class RabbitMQService extends Service {
     //RabbitMQ连接工厂
     private ConnectionFactory factory=new ConnectionFactory();
     private Thread subscribeThread;
-    private static Handler handler;//用于更新ui
-
-    public RabbitMQService() {
-    }
+    private  static Handler handler;//用于更新ui
     public static void setHandler(Handler handler1) {
         handler=handler1;
     }
@@ -44,12 +36,12 @@ public class RabbitMQService extends Service {
     public int onStartCommand(Intent intent, int flags, int startId) {
         //连接设置
         setupConnectionFactory();
+        subscribeThread=subscribe(handler);
         return START_NOT_STICKY;
     }
     @Override
     public IBinder onBind(Intent intent) {
-        // TODO: Return the communication channel to the service.
-        throw new UnsupportedOperationException("Not yet implemented");
+        throw  new RuntimeException("no support");
     }
     @Override
     public void onDestroy() {
@@ -59,7 +51,7 @@ public class RabbitMQService extends Service {
     /**
      * 消费者线程
      */
-    Thread subscribe(final String vehicleDeviceID, final Handler handler) {
+    Thread subscribe(final Handler handler) {
         Thread subscribeThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -71,10 +63,10 @@ public class RabbitMQService extends Service {
                         connection = factory.newConnection();
                         //创建一个通道
                         channel = connection.createChannel();
-                        channel.exchangeDeclare("update-indent","fanout");
+                        channel.exchangeDeclare("indent","fanout");
                         String queueName=channel.queueDeclare().getQueue();
                         //创建消费者
-                        channel.queueBind(queueName,"update-indent","");
+                        channel.queueBind(queueName,"indent","");
                         Consumer consumer=new DefaultConsumer(channel){
                             @Override
                             public void handleDelivery(String consumerTag, Envelope envelope,AMQP.BasicProperties properties,byte[] body)throws
@@ -95,8 +87,6 @@ public class RabbitMQService extends Service {
                         Log.d(TAG, "Success InterruptedException finally");
                         try {
                             if (channel != null) {
-                                //该地方曾经报错时间2017/1/19
-                                //connection is already closed due to connection error; cause: com.rabbitmq.client.MissedHeartbeatException: Heartbeat missing with heartbeat = 60 seconds
                                 channel.close();
                             }
                             if (connection != null) {

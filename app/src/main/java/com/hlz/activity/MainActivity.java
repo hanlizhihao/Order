@@ -26,6 +26,7 @@ import com.hlz.fragment.MeFragment;
 import com.hlz.fragment.UnderwayFragment;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
+import com.hlz.order.RabbitMQService;
 import com.hlz.util.AppManager;
 import com.hlz.util.DialogHelp;
 import com.hlz.util.DoubleClickExitHelper;
@@ -80,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         appManager.addActivity(this);
         toolbar=(Toolbar)findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        Intent intent=new Intent(this, RabbitMQService.class);
+        startService(intent);
+        RabbitMQService.setHandler(rabbitServiceHandler);
     }
     public void InitView()
     {
@@ -270,13 +274,13 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
                 UnderwayAdapter adapter=new UnderwayAdapter(this,indentList);
                 fragment.adapter=adapter;
                 fragment.getPlanList().setAdapter(adapter);
-            }else if (intent!=null&&intent.getIntExtra("reserveChanged",0)!=0){
+            }else if (intent!=null&&!intent.getStringExtra("reserveChanged").equals("")){
                 //当结算时，将会返回int的id,找出以后删除指定的indent
                 UnderwayFragment fragment=(UnderwayFragment)chatsFragment;
                 List<Indent> indentList=fragment.adapter.getIndents();
-                int id=intent.getIntExtra("reserveChanged",0);
+                String id=intent.getStringExtra("reserveChanged");
                 for (int i=0;i<indentList.size();i++){
-                    if (id==indentList.get(i).getId()){
+                    if (id.equals(indentList.get(i).getId().toString())){
                         indentList.remove(i);
                         break;
                     }
@@ -318,6 +322,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         @Override
         public void handleMessage(Message message){
             UnderwayFragment fragment=(UnderwayFragment) chatsFragment;
+            fragment.onRefresh();
         }
     };
 }
