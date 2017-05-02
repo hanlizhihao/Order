@@ -126,6 +126,7 @@ public class LoginActivity extends Activity {
         @Override
         public void onResponse(String s) {
             Gson gson=new Gson();
+            Log.d(TAG,s);
             User user=gson.fromJson(s,User.class);
             if (!user.getName().equals("")){
                 //用于自动登录的配置

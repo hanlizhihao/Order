@@ -12,6 +12,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:selectAllOnFocus="true"
+            android:textColor="@color/best_head_bg"
             android:id="@+id/final_price"/>
     </TableRow>
 </TableLayout>

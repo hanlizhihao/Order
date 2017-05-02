@@ -174,6 +174,11 @@ public class NetworkUtil {
         request.setTag(TAG);
         queue.add(request);
     }
+    public void signIn(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"sign").getUrl()+id,listener,errorListener);
+        request.setTag(TAG);
+        queue.add(request);
+    }
     public void canceledRequest(String TAG){
         queue.cancelAll(TAG);
     }

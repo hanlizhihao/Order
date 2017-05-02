@@ -105,7 +105,6 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             this.price = price;
         }
     }
-
     private List<IndentMenu> indentMenus = new ArrayList<>();
     private AppManager manager;
     private Indent indent;
@@ -217,13 +216,17 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 Intent intent=getIntent();
                 intent.putExtra("reserveChanged",indent.getId());
                 startActivityForResult(intent,0);
-                manager.finishActivity();
+                Alerter.create(UnderwayDetailsActivity.this)
+                        .setBackgroundColor(R.color.colorLightBlue)
+                        .setTitle("结算成功：")
+                        .setText("已经成功结算！")
+                        .setDuration(3000)
+                        .show();
             }else{
                 Intent intent = getIntent();
                 intent.putExtra("reserveChanged", "");
                 Toast.makeText(UnderwayDetailsActivity.this, "结算失败，服务器端异常！", Toast.LENGTH_SHORT).show();
                 UnderwayDetailsActivity.this.setResult(0, intent);
-                manager.finishActivity();
             }
         }
     };
@@ -243,9 +246,13 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                     public void onClick(DialogInterface arg0, int arg1) {
                         if (arg1 == DialogInterface.BUTTON_POSITIVE) {
                             //验证会员
+                            UnderwayDetailsActivity.this.dialog.dismiss();
+                            UnderwayDetailsActivity.this.dialog=null;
                             showValidateTelephoneDialog();
                         } else if (arg1 == DialogInterface.BUTTON_NEGATIVE) {
                             //不验证会员，则直接结算
+                            UnderwayDetailsActivity.this.dialog.dismiss();
+                            UnderwayDetailsActivity.this.dialog=null;
                             showWaitDialog("正在结算");
                             networkUtil.finishedIndent(indent.getId().toString(),finishedListener,errorListener,TAG);
                         }
@@ -253,9 +260,8 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                 };
                 builder.setPositiveButton("确定", dialog);
                 builder.setNegativeButton("取消", dialog);
-                AlertDialog alertDialog = builder.create();
-                this.dialog=alertDialog;
-                alertDialog.show();
+                UnderwayDetailsActivity.this.dialog = builder.create();
+                UnderwayDetailsActivity.this.dialog.show();
                 break;
             case R.id.update_indent:
                 showWaitDialog("正在保存更改");
@@ -294,15 +300,22 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
             showFinishedDialog();//价格改变
         }
     };
+    //最后结算界面
     public void showFinishedDialog(){
-        final View v= LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.dialog_validate_telephone,null);
-        AlertDialog.Builder builder=new AlertDialog.Builder(MyApplication.getContext()).setIcon(R.mipmap.logo).setTitle("结算")
+        final View v= LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.dialog_finished,null);
+        final EditText price= (EditText) v.findViewById(R.id.final_price);
+        double beginPrice=0;
+        for (IndentMenu indentMenu:indentMenus){
+            beginPrice=beginPrice+Double.valueOf(indentMenu.getPrice());
+        }
+        price.setText(Double.toString(beginPrice));
+        AlertDialog.Builder builder=new AlertDialog.Builder(UnderwayDetailsActivity.this).setIcon(R.mipmap.logo).setTitle("结算")
                 .setView(v)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showWaitDialog("正在结算");
-                        final EditText price= (EditText) v.findViewById(R.id.final_price);
+                        UnderwayDetailsActivity.this.dialog.dismiss();
+                        UnderwayDetailsActivity.this.dialog=null;
                         networkUtil.finishedIndent(indent.getId().toString(),UnderwayDetailsActivity.this.telephone,price.getText().toString(),
                                 finishedListener,errorListener,TAG);
                     }
@@ -317,21 +330,20 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
     }
     public void showValidateTelephoneDialog(){
         final View v= LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.dialog_validate_telephone,null);
-        AlertDialog.Builder builder=new AlertDialog.Builder(MyApplication.getContext()).setIcon(R.mipmap.logo).setTitle("验证手机号")
+        AlertDialog.Builder builder=new AlertDialog.Builder(UnderwayDetailsActivity.this).setIcon(R.mipmap.logo).setTitle("验证手机号")
                 .setView(v)
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        showWaitDialog("正在验证手机号");
                         final EditText telephone= (EditText) v.findViewById(R.id.telephone_number);
                         UnderwayDetailsActivity.this.telephone=telephone.getText().toString();
                         networkUtil.validateTelephone(UnderwayDetailsActivity.this.telephone,validateTelephone,errorListener,TAG);
                     }
                 }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
 
-            }
+                }
         });
         dialog=builder.create();
         dialog.show();

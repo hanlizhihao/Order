@@ -1,12 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:orientation="vertical"
 	android:gravity="center"
 	android:layout_width="match_parent"
 	android:layout_height="match_parent">
-	<ImageView
-		android:layout_width="match_parent"
-		android:layout_height="match_parent"
-		android:src="@mipmap/check"
-		android:contentDescription="签到图片" />
+	<com.jiang.android.pbutton.CProgressButton
+		android:layout_width="65dp"
+		android:gravity="center"
+		app:stroke_width="1dp"
+		app:radius="40dp"
+		app:color="@color/colorAccent"
+		app:drawable_xml="@drawable/bounder"
+		android:textSize="12sp"
+		android:textColor="@color/colorAccent"
+		android:id="@+id/sign_in"
+		android:layout_height="30dp" />
 </LinearLayout>
