@@ -4,7 +4,7 @@ package com.hlz.net;
  * QQ：1430261583
  * Created by Hanlizhi on 2016/11/18.
  */
-class URLData {
+public class URLData {
     private String key;
     private long expires;
     private String netType;

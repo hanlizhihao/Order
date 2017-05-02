@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.util.Log;
 
+import com.hlz.net.UrlManager;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
@@ -13,6 +14,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Consumer;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.QueueingConsumer;
 
 import java.io.IOException;
 import java.util.concurrent.TimeoutException;
@@ -27,7 +29,7 @@ public class RabbitMQService extends Service {
         handler=handler1;
     }
     private void setupConnectionFactory() {
-        factory.setHost("localhost");
+        factory.setHost(UrlManager.getUrlManager().findURL(MyApplication.getContext(),"rabbitMQ").getUrl());
         factory.setPort(5672);
         factory.setUsername("guest");
         factory.setPassword("guest");
@@ -63,21 +65,20 @@ public class RabbitMQService extends Service {
                         connection = factory.newConnection();
                         //创建一个通道
                         channel = connection.createChannel();
-                        channel.exchangeDeclare("indent","fanout");
-                        String queueName=channel.queueDeclare().getQueue();
+                        channel.basicQos(1);
+                        AMQP.Queue.DeclareOk q = channel.queueDeclare();
+                        channel.queueBind(q.getQueue(),"indent","fanout");
                         //创建消费者
-                        channel.queueBind(queueName,"indent","");
-                        Consumer consumer=new DefaultConsumer(channel){
-                            @Override
-                            public void handleDelivery(String consumerTag, Envelope envelope,AMQP.BasicProperties properties,byte[] body)throws
-                                    IOException{
-                                String message=new String(body,"UTF-8");
-                                handler.sendEmptyMessage(1);
-                            }
-                        };
-                        channel.basicConsume(queueName, true, consumer);
+                        QueueingConsumer consumer = new QueueingConsumer(channel);
+                        channel.basicConsume(q.getQueue(), true, consumer);
+                        while (true) {
+                            QueueingConsumer.Delivery delivery = consumer.nextDelivery();
+                            String message = new String(delivery.getBody());
+                            System.out.println(" [x] Received '" + message + "'");
+                            handler.sendEmptyMessage(1);
+                        }
                     } catch (Exception e1) {
-                        Log.d(TAG, "Connection broken: " + e1.getClass().getName());
+                        e1.printStackTrace();
                         try {
                             Thread.sleep(5000); //sleep and then try again
                         } catch (InterruptedException e) {
@@ -86,10 +87,10 @@ public class RabbitMQService extends Service {
                     } finally {
                         Log.d(TAG, "Success InterruptedException finally");
                         try {
-                            if (channel != null) {
+                            if (channel != null&&channel.isOpen()) {
                                 channel.close();
                             }
-                            if (connection != null) {
+                            if (connection != null&&connection.isOpen()) {
                                 connection.close();
                             }
                         } catch (IOException e) {

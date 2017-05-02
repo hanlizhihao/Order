@@ -8,7 +8,9 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
 import com.hlz.entity.Indent;
+import com.hlz.entity.IndentModel;
 import com.hlz.order.MyApplication;
 
 import java.util.HashMap;
@@ -89,7 +91,7 @@ public class NetworkUtil {
         queue.add(request);
     }
     public void finishedIndent(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
-        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"finishedIndentNotTelephone").getUrl()+id,listener,
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"finishedIndentNoTelephone").getUrl()+id,listener,
                 errorListener);
         request.setTag(TAG);
         queue.add(request);
@@ -148,6 +150,27 @@ public class NetworkUtil {
         }else{
             request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"canceled").getUrl()+id,listener,errorListener);
         }
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void createIndent(final IndentModel model, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"createIndent").getUrl(),listener,errorListener){
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("table",model.getTable());
+                Gson gson=new Gson();
+                String reserve=gson.toJson(model.getReserve());
+                map.put("reserve",reserve);
+                map.put("price",Double.toString(model.getPrice()));
+                return map;
+            }
+        };
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void getSigns(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
+        StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"getSigns").getUrl()+id,listener,errorListener);
         request.setTag(TAG);
         queue.add(request);
     }

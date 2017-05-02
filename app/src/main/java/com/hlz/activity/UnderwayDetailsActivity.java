@@ -8,7 +8,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AlertDialog;
+import android.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
@@ -170,7 +170,7 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         networkUtil.getSingleIndent(indent.getId().toString(), getSingleIndentById, errorListener, TAG);
     }
 
-    private Response.Listener<String> getSingleIndentById = new Response.Listener<String>() {
+    public Response.Listener<String> getSingleIndentById = new Response.Listener<String>() {
         @Override
         public void onResponse(String o) {
             Gson gson = new Gson();

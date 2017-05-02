@@ -1,11 +1,13 @@
 package com.hlz.net;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.res.XmlResourceParser;
+
 import com.hlz.order.R;
+
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
+
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,12 +18,12 @@ import java.util.Map;
  * 更新该文件，设计为单例模式的UrlManager，优化节点查找方式，减少解析xml的次数
  */
 
-class UrlManager {
+public class UrlManager {
     private Map<String,URLData> urls=null;
     private UrlManager(){
 
     }
-    URLData findURL(final Context activity, final String findKey){
+    public URLData findURL(final Context activity, final String findKey){
         if (urls==null) {
             urls=new HashMap<>();
             final XmlResourceParser xmlParser=activity.getResources().getXml(R.xml.url);
@@ -61,7 +63,7 @@ class UrlManager {
         }
     }
     //单例模式
-    static UrlManager getUrlManager(){
+    public static UrlManager getUrlManager(){
         return UrlManagerHolder.mInstance;
     }
     private static class UrlManagerHolder{

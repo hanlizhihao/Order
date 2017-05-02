@@ -1,6 +1,7 @@
 package com.hlz.activity;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
@@ -24,11 +25,17 @@ import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.hlz.adapter.ShoppingCartAdapter;
 import com.hlz.adapter.SortAdapter;
 import com.hlz.database.DatabaseUtil;
+import com.hlz.entity.IndentModel;
 import com.hlz.entity.ShoppingCart;
+import com.hlz.net.NetworkUtil;
+import com.hlz.net.UrlManager;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.hlz.util.AppManager;
@@ -39,6 +46,7 @@ import com.hlz.util.PinyinComparator;
 import com.hlz.util.SideBar;
 import com.hlz.util.SortModel;
 import com.lqr.recyclerview.LQRRecyclerView;
+import com.tapadoo.alerter.Alerter;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -57,6 +65,7 @@ public class MakeOrderActivity extends AppCompatActivity {
     private SideBar sideBar;
     private TextView dialog;
     private SortAdapter adapter;
+    private Button addIndent;
     private ClearEditText mClearEditText;
     private TextView sumSize;//点菜总数
     private TextView sumPrice;//总钱数
@@ -70,17 +79,63 @@ public class MakeOrderActivity extends AppCompatActivity {
      */
     private CharacterParser characterParser;
     private List<SortModel> SourceDateList;
-
     /**
      * 根据拼音来排列ListView里面的数据类
      */
     private PinyinComparator pinyinComparator;
+    private AppManager manager;
+    public Response.Listener<String> listener=new Response.Listener<String>() {
+        @Override
+        public void onResponse(String s) {
+            if (s!=null&&!"".equals(s)){
+                if (s.equals("success")){
+                    manager.finishActivity();
+                }else{
+                    Toast.makeText(MakeOrderActivity.this,"创建订单失败，服务器端异常！",Toast.LENGTH_LONG).show();
+                }
+            }else{
+                Alerter.create(MakeOrderActivity.this)
+                        .setBackgroundColor(R.color.colorLightBlue)
+                        .setTitle("创建订单失败！")
+                        .setText("网络请求失败！")
+                        .setDuration(2000)
+                        .show();
+            }
+        }
+    };
+    public Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            Alerter.create(MakeOrderActivity.this)
+                    .setBackgroundColor(R.color.colorLightBlue)
+                    .setTitle("网络出错了哟！")
+                    .setText("您可能与服务器失去连接！")
+                    .setDuration(2000)
+                    .show();
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_make_order);
+        manager= AppManager.getAppManager();
+        manager.addActivity(this);
         showWaitDialog("初始化...");
         realative=(RelativeLayout)findViewById(R.id.cart);
+        addIndent=(Button)findViewById(R.id.take_order_button);
+        addIndent.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!shoppingCart.isEmpty()){
+                    NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
+                    IndentModel model=new IndentModel();
+                    //窗口弹出
+                    networkUtil.createIndent(model,listener,errorListener,TAG);
+                }else{
+                    Toast.makeText(MakeOrderActivity.this,"还没有选择菜品",Toast.LENGTH_LONG).show();
+                }
+            }
+        });
         initViews();
         AppManager.getAppManager().addActivity(this);
         hideWaitDialog();
@@ -157,7 +212,7 @@ public class MakeOrderActivity extends AppCompatActivity {
         final PopupWindow finalPopup=new PopupWindow(this);
         finalPopup.setContentView(view);
         finalPopup.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);
-        finalPopup.setWidth(ViewGroup.LayoutParams.WRAP_CONTENT);
+        finalPopup.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);
         finalPopup.setTouchable(true);
         finalPopup.setOutsideTouchable(false);
         finalPopup.setBackgroundDrawable(new ColorDrawable(0x000000));
@@ -183,7 +238,6 @@ public class MakeOrderActivity extends AppCompatActivity {
                 if (finalPopup.isShowing()){
                     adapter = new SortAdapter(MyApplication.getContext(), SourceDateList, order_cart,realative,sumSize,sumPrice,shoppingCart);
                     sortListView.setAdapter(adapter);
-                    Log.d(TAG,"update函数已经执行");
                     finalPopup.dismiss();
                 }else{
                     shoppingCartAdapter=new ShoppingCartAdapter(shoppingCart,MyApplication.getContext(),sumSize,sumPrice);
@@ -200,6 +254,7 @@ public class MakeOrderActivity extends AppCompatActivity {
             }
         });
     }
+
     //用于更新shoppingCart
     private void changeShoppingCartAdapter(){
         shoppingCartAdapter.getData().clear();

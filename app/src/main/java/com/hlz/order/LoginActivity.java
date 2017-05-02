@@ -21,6 +21,7 @@ import com.hlz.activity.MainActivity;
 import com.hlz.database.DatabaseUtil;
 import com.hlz.entity.Menu;
 import com.hlz.entity.Menus;
+import com.hlz.entity.User;
 import com.hlz.net.NetworkUtil;
 import com.hlz.util.DialogHelp;
 import com.tapadoo.alerter.Alerter;
@@ -124,12 +125,17 @@ public class LoginActivity extends Activity {
     public Response.Listener successListener=new Response.Listener<String>() {
         @Override
         public void onResponse(String s) {
-            Log.d(TAG,s);
-            if ("success".equals(s)){
+            Gson gson=new Gson();
+            User user=gson.fromJson(s,User.class);
+            if (!user.getName().equals("")){
                 //用于自动登录的配置
                 SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
                 SharedPreferences.Editor edit=sp.edit();
                 edit.putBoolean("isLogin",true);
+                edit.putInt("id",user.getId());
+                edit.putString("name",user.getName());
+                edit.putString("username",user.getUsername());
+                edit.putString("password",user.getPassword());
                 edit.apply();
                 //跳转界面
                 hideWaitDialog();
@@ -165,13 +171,10 @@ public class LoginActivity extends Activity {
                                 .setDuration(3000)
                                 .show();
                     }else{
-                        Log.d(TAG,"向数据库插入菜单信息成功");
                         Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT);
                         hideWaitDialog();
                         if (login){
-                            Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                            startActivity(intent);
-                            LoginActivity.this.finish();
+                            secondLogin();
                         }
                     }
                 }else{
@@ -225,7 +228,6 @@ public class LoginActivity extends Activity {
         NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
         if (isFristRun()){
             //如果是第一次运行，则先创建数据库
-            Log.d("LoginActivity","是第一次运行");
             DatabaseUtil databaseUtil =new DatabaseUtil();
             databaseUtil.createDatabase(MyApplication.getContext());
             databaseUtil.DataBaseUtilInit(MyApplication.getContext());
@@ -244,9 +246,7 @@ public class LoginActivity extends Activity {
                     Toast.makeText(MyApplication.getContext(),"数据初始化成功",Toast.LENGTH_SHORT).show();
                     hideWaitDialog();
                     if (login){
-                        Intent intent=new Intent(LoginActivity.this,MainActivity.class);
-                        startActivity(intent);
-                        LoginActivity.this.finish();
+                        secondLogin();
                     }
                 }else{
                     NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
@@ -261,4 +261,14 @@ public class LoginActivity extends Activity {
             }
         }
     };
+    private void secondLogin(){
+        showWaitDialog("登录中...");
+        SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
+        String username=sp.getString("username","");
+        String password=sp.getString("password","");
+        if (!username.equals("")){
+            NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
+            networkUtil.login(username,password,successListener,errorListener,TAG);
+        }
+    }
 }
