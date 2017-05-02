@@ -33,7 +33,7 @@
             android:id="@+id/radio_contacts"
             style="@style/main_tab"
             android:drawableTop="@drawable/order"
-            android:text="点菜"
+            android:text="@string/history_indent"
             android:button="@null"
              />
         <RadioButton

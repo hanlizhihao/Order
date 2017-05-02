@@ -102,7 +102,9 @@ public class UnderwayAdapter extends RecyclerView.Adapter<UnderwayAdapter.ViewHo
                 intent.putExtra("fulfill",indent.getFulfill());
                 intent.putExtra("reserve",indent.getReserve());
                 intent.putExtra("reminderNumber",indent.getReminderNumber().toString());
-                intent.putExtra("firstTime",indent.getFirstTime().toString());
+                if (indent.getFirstTime()!=null){
+                    intent.putExtra("firstTime",indent.getFirstTime().toString());
+                }
                 intent.putExtra("price",indent.getPrice().toString());
                 activity.startActivityForResult(intent,0);//将会获取Activity返回的结果
             }

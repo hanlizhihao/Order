@@ -52,8 +52,6 @@ import butterknife.OnClick;
  * 2.具有toolBar，对不同的订单，显示不同toolBar
  */
 public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
-    @InjectView(R.id.add_green)
-    Button addGreen;
     private boolean _isVisible = true;
     private ProgressDialog _waitDialog;
     public final String TAG = "UnderwayDetailsActivity";
@@ -130,7 +128,9 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
         indent.setTableId(intent.getStringExtra("tableID"));
         indent.setId(Integer.valueOf(intent.getStringExtra("id")));
         indent.setReminderNumber(Integer.valueOf(intent.getStringExtra("reminderNumber")));
-        indent.setFirstTime(Long.valueOf(intent.getStringExtra("firstTime")));
+        if(intent.getStringExtra("firstTime")!=null){
+            indent.setFirstTime(Long.valueOf(intent.getStringExtra("firstTime")));
+        }
         indent.setPrice(Double.valueOf(intent.getStringExtra("price")));
         //堆栈式管理
         manager = AppManager.getAppManager();
@@ -220,21 +220,21 @@ public class UnderwayDetailsActivity extends AppCompatActivity implements SwipeR
                         .setBackgroundColor(R.color.colorLightBlue)
                         .setTitle("结算成功：")
                         .setText("已经成功结算！")
-                        .setDuration(3000)
+                        .setDuration(2000)
                         .show();
+                manager.finishActivity();
             }else{
                 Intent intent = getIntent();
                 intent.putExtra("reserveChanged", "");
                 Toast.makeText(UnderwayDetailsActivity.this, "结算失败，服务器端异常！", Toast.LENGTH_SHORT).show();
                 UnderwayDetailsActivity.this.setResult(0, intent);
+                manager.finishActivity();
             }
         }
     };
     @OnClick({R.id.finished_indent, R.id.update_indent})
     public void onViewClicked(View view) {
         switch (view.getId()) {
-            case R.id.add_green:
-
             case R.id.finished_indent:
                 //提示，验证手机号
                 AlertDialog.Builder builder = new AlertDialog.Builder(UnderwayDetailsActivity.this);

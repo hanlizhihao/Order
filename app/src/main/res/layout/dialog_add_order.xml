@@ -6,14 +6,13 @@
     <TableRow>
         <TextView android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="总价："
+            android:text="桌号："
             android:textSize="10pt" />
         <EditText
             android:layout_width="100sp"
             android:layout_height="wrap_content"
-            android:selectAllOnFocus="true"
-            android:inputType="number"
+            android:inputType="text"
             android:textColor="@color/best_head_bg"
-            android:id="@+id/final_price"/>
+            android:id="@+id/make_order_table"/>
     </TableRow>
 </TableLayout>

@@ -83,7 +83,11 @@ public class NetworkUtil {
                 map.put("table", indent.getTableId());
                 map.put("reminderNumber", indent.getReminderNumber().toString());
                 map.put("price", indent.getPrice().toString());
-                map.put("time", indent.getFirstTime().toString());
+                if (indent.getFirstTime()!=null){
+                    map.put("time", indent.getFirstTime().toString());
+                }else{
+                    map.put("time","");
+                }
                 return map;
             }
         };
@@ -154,13 +158,14 @@ public class NetworkUtil {
         queue.add(request);
     }
     public void createIndent(final IndentModel model, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG){
-        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"createIndent").getUrl(),listener,errorListener){
+        StringRequest request=new StringRequest(Request.Method.POST,urlManager.findURL(context,"addIndent").getUrl(),listener,errorListener){
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> map = new HashMap<>();
                 map.put("table",model.getTable());
                 Gson gson=new Gson();
                 String reserve=gson.toJson(model.getReserve());
+                System.out.println(reserve);
                 map.put("reserve",reserve);
                 map.put("price",Double.toString(model.getPrice()));
                 return map;

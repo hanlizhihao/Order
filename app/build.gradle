@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.hlz.order"
         minSdkVersion 17
-        targetSdkVersion 23
+        targetSdkVersion 25
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
@@ -37,8 +37,8 @@ dependencies {
     compile 'com.android.support:design:25.0.1'
     compile 'hanks.xyz:htextview-library:0.1.5'
     compile 'com.tapadoo.android:alerter:1.0.6'
-    compile 'com.google.code.gson:gson:2.2.4'
-    compile 'com.android.support:recyclerview-v7:25.0.1'
+    compile 'com.google.code.gson:gson:2.7'
+    compile 'com.android.support:recyclerview-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
     compile 'com.lqr.recyclerview:library:1.0.2'
     compile 'com.github.jiang111:CProgressButton:v1.1'

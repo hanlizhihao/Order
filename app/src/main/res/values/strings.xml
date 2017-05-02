@@ -37,4 +37,5 @@
     <string name="reserve_number">订菜数量</string>
     <string name="reduce_serve_number">减少订菜数量</string>
     <string name="add_reserve_number">增加订菜数量</string>
+    <string name="history_indent">历史订单</string>
 </resources>

@@ -18,13 +18,9 @@
             android:layout_weight="0.5"
             android:id="@+id/finished_indent"
             android:text="@string/finished"/>
-        <Button
+        <Space
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:background="@color/green_bfg"
-            android:textColor="@color/white"
-            android:text="添加菜品"
-            android:id="@+id/add_green"
             android:layout_weight="0.5"/>
         <Button
             android:layout_width="0dp"

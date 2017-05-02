@@ -8,8 +8,8 @@ package com.hlz.entity;
 import java.util.Map;
 public class IndentModel {
     private String table;//桌号
-    private Map<String,String> reserve;//订菜
-    private Map<String,String> fulfill;//上菜
+    private Map<String,Integer> reserve;//订菜
+    private Map<String,Integer> fulfill;//上菜
     private int reminderNumber;//催单次数
     private double price;
     private long time;//第一次上菜时间
@@ -30,19 +30,19 @@ public class IndentModel {
         this.table = table;
     }
 
-    public Map<String,String> getReserve() {
+    public Map<String,Integer> getReserve() {
         return reserve;
     }
 
-    public void setReserve(Map<String,String> reserve) {
+    public void setReserve(Map<String,Integer> reserve) {
         this.reserve = reserve;
     }
 
-    public Map<String,String> getFulfill() {
+    public Map<String,Integer> getFulfill() {
         return fulfill;
     }
 
-    public void setFulfill(Map<String,String> fulfill) {
+    public void setFulfill(Map<String,Integer> fulfill) {
         this.fulfill = fulfill;
     }
 

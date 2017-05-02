@@ -1,6 +1,8 @@
 package com.hlz.activity;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
@@ -101,6 +104,7 @@ public class MakeOrderActivity extends AppCompatActivity {
                         .setDuration(2000)
                         .show();
             }
+            hideWaitDialog();
         }
     };
     public Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -112,6 +116,7 @@ public class MakeOrderActivity extends AppCompatActivity {
                     .setText("您可能与服务器失去连接！")
                     .setDuration(2000)
                     .show();
+            hideWaitDialog();
         }
     };
     @Override
@@ -127,10 +132,29 @@ public class MakeOrderActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 if (!shoppingCart.isEmpty()){
-                    NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
-                    IndentModel model=new IndentModel();
+                    final NetworkUtil networkUtil=NetworkUtil.getNetworkUtil();
+                    final IndentModel model=new IndentModel();
+                    model.setPrice(shoppingCart.getPrice());
+                    model.setReserve(shoppingCart.getOrder_book());
+                    final View v=LayoutInflater.from(MyApplication.getContext()).inflate(R.layout.dialog_add_order,null);
+                    new AlertDialog.Builder(MakeOrderActivity.this).setIcon(R.mipmap.logo).setTitle("结算")
+                            .setView(v)
+                            .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialog, int which) {
+                                    EditText table=(EditText)v.findViewById(R.id.make_order_table);
+                                    String tableId=table.getText().toString();
+                                    model.setTable(tableId);
+                                    networkUtil.createIndent(model,listener,errorListener,TAG);
+                                    showWaitDialog("正在下单");
+                                }
+                            }).setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                    }).create().show();
                     //窗口弹出
-                    networkUtil.createIndent(model,listener,errorListener,TAG);
                 }else{
                     Toast.makeText(MakeOrderActivity.this,"还没有选择菜品",Toast.LENGTH_LONG).show();
                 }

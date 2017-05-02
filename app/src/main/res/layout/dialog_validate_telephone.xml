@@ -9,9 +9,10 @@
             android:text="手机号码："
             android:textSize="10pt" />
         <EditText
-            android:layout_width="match_parent"
+            android:layout_width="100sp"
             android:layout_height="wrap_content"
             android:selectAllOnFocus="true"
+            android:inputType="phone"
             android:textColor="@color/best_head_bg"
             android:id="@+id/telephone_number"/>
     </TableRow>
