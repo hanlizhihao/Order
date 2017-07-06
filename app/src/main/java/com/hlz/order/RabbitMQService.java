@@ -31,8 +31,8 @@ public class RabbitMQService extends Service {
     private void setupConnectionFactory() {
         factory.setHost(UrlManager.getUrlManager().findURL(MyApplication.getContext(),"rabbitMQ").getUrl());
         factory.setPort(5672);
-        factory.setUsername("guest");
-        factory.setPassword("guest");
+        factory.setUsername("root");
+        factory.setPassword("root");
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
