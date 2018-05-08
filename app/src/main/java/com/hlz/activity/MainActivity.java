@@ -96,8 +96,7 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
         main_tab_RadioGroup.setOnCheckedChangeListener(this);
     }
 
-    public void InitViewPager()
-    {
+    public void InitViewPager() {
         main_viewPager = (ViewPager) findViewById(R.id.main_ViewPager);
         fragmentList = new ArrayList<>() ;
 

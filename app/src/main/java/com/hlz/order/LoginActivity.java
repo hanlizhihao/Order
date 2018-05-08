@@ -63,7 +63,9 @@ public class LoginActivity extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //设置这个activity界面
         setContentView(R.layout.login);
+        //使用butteKnife实现了不需要写很多的findViewById
         ButterKnife.inject(this);
         showWaitDialog("正在初始化...");
         SharedPreferences sp=MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);

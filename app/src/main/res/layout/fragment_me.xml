@@ -113,34 +113,38 @@
 	<Space
 		android:layout_width="match_parent"
 		android:layout_height="20dp" />
+
 	<LinearLayout
 		android:layout_width="match_parent"
 		android:layout_height="60dp"
-		android:orientation="horizontal"
+		android:background="@color/white"
 		android:gravity="start"
-		android:background="@color/white">
+		android:orientation="horizontal">
+
 		<ImageView
-			android:layout_marginLeft="18dp"
-			android:layout_marginTop="8dp"
-			android:layout_marginRight="10dp"
 			android:layout_width="wrap_content"
 			android:layout_height="match_parent"
-			android:src="@mipmap/ic_run"/>
+			android:layout_marginLeft="18dp"
+			android:layout_marginRight="10dp"
+			android:layout_marginTop="8dp"
+			android:src="@mipmap/ic_run" />
+
 		<TextView
+			android:layout_width="wrap_content"
+			android:layout_height="match_parent"
 			android:layout_marginLeft="18dp"
 			android:layout_marginTop="25dp"
-			android:layout_width="wrap_content"
-			android:layout_height="match_parent"
 			android:text="@string/TimeUsed"
-			android:textSize="18sp"
-			android:textColor="@color/orange_bg"/>
+			android:textColor="@color/orange_bg"
+			android:textSize="18sp" />
+
 		<com.hanks.htextview.HTextView
 			android:id="@+id/timeused"
-			android:layout_marginTop="25dp"
 			android:layout_width="wrap_content"
 			android:layout_height="wrap_content"
-			android:gravity="center"
+			android:layout_marginTop="25dp"
 			android:background="#ffffff"
+			android:gravity="center"
 			android:textColor="#fe864b"
 			android:textSize="17sp" />
 	</LinearLayout>

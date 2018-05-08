@@ -3,7 +3,6 @@ package com.hlz.fragment;
  * 显示进度的Fragment
  * Created by hlz on 2016/9/8.
  */
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -27,7 +26,6 @@ import com.hlz.entity.Indent;
 import com.hlz.net.NetworkUtil;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
-import com.hlz.order.RabbitMQService;
 import com.lqr.recyclerview.LQRRecyclerView;
 import com.tapadoo.alerter.Alerter;
 

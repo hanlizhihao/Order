@@ -151,7 +151,9 @@ public class SortAdapter extends BaseAdapter implements SectionIndexer{
                 }else{
                     if (singleSize==1){
                         finalViewHolder.deleteOrder.setVisibility(View.GONE);
-                        orderCart.setBackgroundResource(R.mipmap.cart);
+                        if (shoppingCart.getOrder_size() == 1) {
+                            orderCart.setBackgroundResource(R.mipmap.cart);
+                        }
                         boolean result=shoppingCart.deleteSingleSize(getItem(position).getName());
                         if (result){
                             String sumNumber=mContext.getResources().getString(R.string.sumSize)+
