@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -55,6 +56,16 @@ public class MainActivity extends AppCompatActivity implements RadioGroup.OnChec
     Fragment contactsFragment;
     Fragment discoverFragment;
     Fragment meFragment;
+
+    public Parcelable getParcelable() {
+        return parcelable;
+    }
+
+    public void setParcelable(Parcelable parcelable) {
+        this.parcelable = parcelable;
+    }
+
+    Parcelable parcelable;
     //设备运行时间计时
     @Override
     public void onResume(){
