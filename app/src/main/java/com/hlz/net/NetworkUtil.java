@@ -12,6 +12,7 @@ import com.google.gson.Gson;
 import com.hlz.entity.Indent;
 import com.hlz.entity.IndentModel;
 import com.hlz.order.MyApplication;
+import com.hlz.order.R;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -181,6 +182,11 @@ public class NetworkUtil {
     }
     public void signIn(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
         StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"sign").getUrl()+id,listener,errorListener);
+        request.setTag(TAG);
+        queue.add(request);
+    }
+    public void signOut(String id, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG) {
+        StringRequest request = new StringRequest(Request.Method.GET, urlManager.findURL(context, "signOut").getUrl()+id, listener, errorListener);
         request.setTag(TAG);
         queue.add(request);
     }
