@@ -6,8 +6,21 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
+
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.hlz.activity.MainActivity;
+import com.hlz.entity.WorkTimeModel;
+import com.hlz.fragment.DiscoverFragment;
+import com.hlz.net.NetworkUtil;
+import com.hlz.order.MyApplication;
+import com.hlz.order.R;
+import com.tapadoo.alerter.Alerter;
 
 import java.util.Date;
+
+import static android.content.Context.MODE_PRIVATE;
 
 /**
  * QQ：1430261583
@@ -26,6 +39,20 @@ public class MonitoringTime{
     private SharedPreferences.Editor editor;
     private SharedPreferences monitoring;
     private long showTime;
+
+    private Response.Listener<String> listener = new Response.Listener<String>() {
+        @Override
+        public void onResponse(String o) {
+
+        }
+    };
+    public Response.ErrorListener errorListener = new Response.ErrorListener() {
+        @Override
+        public void onErrorResponse(VolleyError volleyError) {
+            volleyError.printStackTrace();
+            Toast.makeText(MyApplication.getContext(), "网络连接异常",Toast.LENGTH_LONG).show();
+        }
+    };
     private void Time() {
         try {
             while (signStartOrEnd){
@@ -65,6 +92,61 @@ public class MonitoringTime{
             editor.putLong("showTime",0);
             editor.commit();
         }
+        if (endTime != null) {
+            WorkTimeModel model = new WorkTimeModel();
+            SharedPreferences sp= MyApplication.getContext().getSharedPreferences("appConfig",MODE_PRIVATE);
+            model.setId(sp.getInt("id",0));
+            String time = "";
+            long usedTime=monitoring.getLong("showTime",0);
+            usedTime=usedTime/1000;
+            if (usedTime<60){
+                time=Long.toString(usedTime);
+                time=time+"秒";
+            }
+            else
+            {
+                if (usedTime>=3600)
+                {
+                    long hour=usedTime/3600;
+                    long minute=usedTime%3600/60;
+                    long second=usedTime%3600%60;
+                    time=Long.toString(hour)+"小时"+Long.toString(minute)+"分钟"+
+                            Long.toString(second)+"秒";
+                }else
+                {
+                    long minute=usedTime/60;
+                    long second=usedTime%60;
+                    time=Long.toString(minute)+"分钟"+Long.toString(second)+"秒";
+                }
+            }
+            model.setTime(time);
+            model.setLeaveBeginTime(new Date(endTime));
+            model.setLeaveEndTime(new Date(System.currentTimeMillis()));
+            long durationTime = model.getLeaveEndTime().getTime() - model.getLeaveBeginTime().getTime();
+            String duration = "";
+            if (usedTime<60){
+                time=Long.toString(usedTime);
+                duration=time+"秒";
+            }
+            else
+            {
+                if (usedTime>=3600)
+                {
+                    long hour=usedTime/3600;
+                    long minute=usedTime%3600/60;
+                    long second=usedTime%3600%60;
+                    duration=Long.toString(hour)+"小时"+Long.toString(minute)+"分钟"+
+                            Long.toString(second)+"秒";
+                }else
+                {
+                    long minute=usedTime/60;
+                    long second=usedTime%60;
+                    duration=Long.toString(minute)+"分钟"+Long.toString(second)+"秒";
+                }
+            }
+            model.setDuration(duration);
+            NetworkUtil.getNetworkUtil().addWork(model, listener, errorListener, "MonitoringTime");
+        }
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -73,6 +155,8 @@ public class MonitoringTime{
         }).start();
         Log.d("TAG","计时开始成功");
     }
+
+
     public void end(){
         this.signStartOrEnd=false;
         Date date=new Date();

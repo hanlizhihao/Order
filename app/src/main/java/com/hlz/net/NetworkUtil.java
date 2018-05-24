@@ -11,6 +11,7 @@ import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 import com.hlz.entity.Indent;
 import com.hlz.entity.IndentModel;
+import com.hlz.entity.WorkTimeModel;
 import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 
@@ -175,6 +176,27 @@ public class NetworkUtil {
         request.setTag(TAG);
         queue.add(request);
     }
+
+    /**
+     * 发送App离开时间与运行时间
+     */
+    public void addWork(final WorkTimeModel model, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG) {
+        StringRequest request = new StringRequest(Request.Method.POST, urlManager.findURL(context, "addWork").getUrl(), listener, errorListener) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<>();
+                map.put("id", String.valueOf(model.getId()));
+                map.put("time", String.valueOf(model.getTime()));
+                map.put("leaveBeginTime", String.valueOf(model.getLeaveBeginTime()));
+                map.put("leaveEndTime", String.valueOf(model.getLeaveEndTime()));
+                map.put("duration", model.getDuration());
+                return map;
+            }
+        };
+        request.setTag(TAG);
+        queue.add(request);
+    }
+
     public void getSigns(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
         StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"getSigns").getUrl()+id,listener,errorListener);
         request.setTag(TAG);

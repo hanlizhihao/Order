@@ -65,6 +65,10 @@
         Expires="0"
         NetType="get"
         Url="http://192.168.137.1:8080/signOut/"/>
+    <Node Key="addWork"
+        Expires="0"
+        NetType="post"
+        Url="http://192.168.137.1:8080/addWork/"/>
     <Node Key="rabbitMQ"
         Expires="0"
         NetType=""
