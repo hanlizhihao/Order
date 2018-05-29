@@ -23,7 +23,7 @@ public class WorkTimeModel {
     /**
      * 离开持续时间
      */
-    private String duration;
+    private Long duration;
 
     public int getId() {
         return id;
@@ -57,11 +57,11 @@ public class WorkTimeModel {
         this.leaveEndTime = leaveEndTime;
     }
 
-    public String getDuration() {
+    public Long getDuration() {
         return duration;
     }
 
-    public void setDuration(String duration) {
+    public void setDuration(Long duration) {
         this.duration = duration;
     }
 }

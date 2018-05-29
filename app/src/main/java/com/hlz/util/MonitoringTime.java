@@ -18,6 +18,9 @@ import com.hlz.order.MyApplication;
 import com.hlz.order.R;
 import com.tapadoo.alerter.Alerter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.Date;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -40,9 +43,9 @@ public class MonitoringTime{
     private SharedPreferences monitoring;
     private long showTime;
 
-    private Response.Listener<String> listener = new Response.Listener<String>() {
+    private Response.Listener<JSONObject> listener = new Response.Listener<JSONObject>() {
         @Override
-        public void onResponse(String o) {
+        public void onResponse(JSONObject o) {
 
         }
     };
@@ -98,54 +101,15 @@ public class MonitoringTime{
             model.setId(sp.getInt("id",0));
             String time = "";
             long usedTime=monitoring.getLong("showTime",0);
-            usedTime=usedTime/1000;
-            if (usedTime<60){
-                time=Long.toString(usedTime);
-                time=time+"秒";
-            }
-            else
-            {
-                if (usedTime>=3600)
-                {
-                    long hour=usedTime/3600;
-                    long minute=usedTime%3600/60;
-                    long second=usedTime%3600%60;
-                    time=Long.toString(hour)+"小时"+Long.toString(minute)+"分钟"+
-                            Long.toString(second)+"秒";
-                }else
-                {
-                    long minute=usedTime/60;
-                    long second=usedTime%60;
-                    time=Long.toString(minute)+"分钟"+Long.toString(second)+"秒";
-                }
-            }
-            model.setTime(time);
+            model.setTime(StringUtil.change(usedTime));
             model.setLeaveBeginTime(new Date(endTime));
             model.setLeaveEndTime(new Date(System.currentTimeMillis()));
-            long durationTime = model.getLeaveEndTime().getTime() - model.getLeaveBeginTime().getTime();
-            String duration = "";
-            if (usedTime<60){
-                time=Long.toString(usedTime);
-                duration=time+"秒";
+            model.setDuration(model.getLeaveEndTime().getTime() - model.getLeaveBeginTime().getTime());
+            try {
+                NetworkUtil.getNetworkUtil().addWork(model, listener, errorListener, "MonitoringTime");
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
-            else
-            {
-                if (usedTime>=3600)
-                {
-                    long hour=usedTime/3600;
-                    long minute=usedTime%3600/60;
-                    long second=usedTime%3600%60;
-                    duration=Long.toString(hour)+"小时"+Long.toString(minute)+"分钟"+
-                            Long.toString(second)+"秒";
-                }else
-                {
-                    long minute=usedTime/60;
-                    long second=usedTime%60;
-                    duration=Long.toString(minute)+"分钟"+Long.toString(second)+"秒";
-                }
-            }
-            model.setDuration(duration);
-            NetworkUtil.getNetworkUtil().addWork(model, listener, errorListener, "MonitoringTime");
         }
         new Thread(new Runnable() {
             @Override
@@ -179,30 +143,7 @@ public class MonitoringTime{
                         Message msg=new Message();
                         msg.what=0x123;
                         Bundle bundle=new Bundle();
-                        usedTime=usedTime/1000;
-                        if (usedTime<60){
-                            String time=Long.toString(usedTime);
-                            time=time+"秒";
-                            bundle.putString("showTime",time);
-                        }
-                        else
-                        {
-                            if (usedTime>=3600)
-                            {
-                                long hour=usedTime/3600;
-                                long minute=usedTime%3600/60;
-                                long second=usedTime%3600%60;
-                                String time=Long.toString(hour)+"小时"+Long.toString(minute)+"分钟"+
-                                        Long.toString(second)+"秒";
-                                bundle.putString("showTime",time);
-                            }else
-                            {
-                                long minute=usedTime/60;
-                                long second=usedTime%60;
-                                String time=Long.toString(minute)+"分钟"+Long.toString(second)+"秒";
-                                bundle.putString("showTime",time);
-                            }
-                        }
+                        bundle.putString("showTime", StringUtil.change(usedTime));
                         msg.setData(bundle);
                         handler.sendMessage(msg);
                         Thread.sleep(1000);

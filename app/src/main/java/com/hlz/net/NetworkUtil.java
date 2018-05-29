@@ -6,9 +6,13 @@ import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 import com.hlz.entity.Indent;
 import com.hlz.entity.IndentModel;
 import com.hlz.entity.WorkTimeModel;
@@ -180,8 +184,17 @@ public class NetworkUtil {
     /**
      * 发送App离开时间与运行时间
      */
-    public void addWork(final WorkTimeModel model, Response.Listener<String> listener, Response.ErrorListener errorListener, String TAG) {
-        StringRequest request = new StringRequest(Request.Method.POST, urlManager.findURL(context, "addWork").getUrl(), listener, errorListener) {
+    public void addWork(final WorkTimeModel model, Response.Listener<JSONObject> listener, Response.ErrorListener errorListener, String TAG) throws JSONException {
+        JSONObject jsonRequest = new JSONObject();
+        jsonRequest.put("id", model.getId());
+        jsonRequest.put("time", model.getTime());
+        jsonRequest.put("leaveBeginTime", model.getLeaveBeginTime().getTime());
+        jsonRequest.put("leaveEndTime", model.getLeaveEndTime().getTime());
+        jsonRequest.put("duration", model.getDuration());
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST,
+                urlManager.findURL(context, "addWork").getUrl(), jsonRequest, listener, errorListener);
+
+/*        StringRequest request = new StringRequest(Request.Method.POST, urlManager.findURL(context, "addWork").getUrl(), listener, errorListener) {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> map = new HashMap<>();
@@ -192,10 +205,16 @@ public class NetworkUtil {
                 map.put("duration", model.getDuration());
                 return map;
             }
-        };
+            @Override
+            protected Map<String, Object> getParams() throws AuthFailureError {
+                Map<
+            }
+        };*/
+
         request.setTag(TAG);
         queue.add(request);
     }
+
 
     public void getSigns(String id,Response.Listener<String> listener,Response.ErrorListener errorListener,String TAG){
         StringRequest request=new StringRequest(Request.Method.GET,urlManager.findURL(context,"getSigns").getUrl()+id,listener,errorListener);
